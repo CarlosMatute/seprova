@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\DarkModeController;
 use App\Http\Controllers\ColorSchemeController;
+use App\Http\Controllers\EmpleadosController;
 
 /*
 |--------------------------------------------------------------------------
@@ -102,4 +103,17 @@ Route::middleware('auth')->group(function () {
         Route::get('slider-page', 'slider')->name('slider');
         Route::get('image-zoom-page', 'imageZoom')->name('image-zoom');
     });
+    //Inicia SEPROVA
+        Route::get('/empleados', [EmpleadosController::class, 'ver_empleados'])->name('empleados');
+        Route::post('/empleados/guardar', [EmpleadosController::class, 'guardar_empleados']);
+        Route::get('/clientes', [ClientesController::class, 'ver_clientes'])->name('clientes');
+        Route::post('/clientes/guardar', [ClientesController::class, 'guardar_clientes']);
+        Route::get('/ubicaciones', [UbicacionesController::class, 'ver_ubicaciones'])->name('ubicaciones');
+        Route::post('/ubicaciones/guardar', [UbicacionesController::class, 'guardar_ubicaciones']);
+        Route::post('/departamentos-municipios', [DepartamentosMunicipiosController::class, 'ver_departamento_municipios']);
+        Route::get('/reportes', [ReportesController::class, 'imprimir_reporte']);
+
+        Route::get("/per-empleado",[EmpleadosController::class, "ver_per_empleado"]);
+        Route::post("/per-empleado/guardar",[EmpleadosController::class, "guardar_per_empleado"]);
+    //Finaliza SEPROVA
 });

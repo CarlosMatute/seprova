@@ -12,7 +12,7 @@
                 src="{{ Vite::asset('resources/images/logo.svg') }}"
                 alt="Icewall Tailwind HTML Admin Template"
             />
-            <span class="ml-3 text-lg text-white"> Icewall </span>
+            <span class="ml-3 text-lg text-white"> SEPROVA </span>
         </a>
         <!-- END: Logo -->
         <!-- BEGIN: Breadcrumb -->
@@ -30,7 +30,7 @@
         </x-base.breadcrumb>
         <!-- END: Breadcrumb -->
         <!-- BEGIN: Search -->
-        <div class="intro-x relative mr-3 sm:mr-6">
+        <!-- <div class="intro-x relative mr-3 sm:mr-6">
             <div class="search hidden sm:block">
                 <x-base.form-input
                     class="w-56 rounded-full border-transparent bg-slate-200 pr-8 shadow-none transition-[width] duration-300 ease-in-out focus:w-72 focus:border-transparent dark:bg-darkmode-400/70"
@@ -146,10 +146,10 @@
                     @endforeach
                 </div>
             </x-base.transition>
-        </div>
+        </div> -->
         <!-- END: Search -->
         <!-- BEGIN: Notifications -->
-        <x-base.popover class="intro-x mr-4 sm:mr-6">
+        <!-- <x-base.popover class="intro-x mr-4 sm:mr-6">
             <x-base.popover.button
                 class="relative block text-white/70 outline-none before:absolute before:top-[-2px] before:right-0 before:h-[8px] before:w-[8px] before:rounded-full before:bg-danger before:content-['']"
             >
@@ -194,7 +194,7 @@
                     </div>
                 @endforeach
             </x-base.popover.panel>
-        </x-base.popover>
+        </x-base.popover> -->
         <!-- END: Notifications -->
         <!-- BEGIN: Account Menu -->
         <x-base.menu>
@@ -215,7 +215,7 @@
                         {{ $fakers[0]['jobs'][0] }}
                     </div>
                 </x-base.menu.header>
-                <x-base.menu.divider class="bg-white/[0.08]" />
+                <!-- <x-base.menu.divider class="bg-white/[0.08]" />
                 <x-base.menu.item class="hover:bg-white/5">
                     <x-base.lucide
                         class="mr-2 h-4 w-4"
@@ -239,13 +239,13 @@
                         class="mr-2 h-4 w-4"
                         icon="HelpCircle"
                     /> Help
-                </x-base.menu.item>
+                </x-base.menu.item> -->
                 <x-base.menu.divider class="bg-white/[0.08]" />
-                <x-base.menu.item class="hover:bg-white/5">
+                <x-base.menu.item class="hover:bg-white/5" href="{{url('logout')}}">
                     <x-base.lucide
                         class="mr-2 h-4 w-4"
                         icon="ToggleRight"
-                    /> Logout
+                    /> Cerrar Sesión
                 </x-base.menu.item>
             </x-base.menu.items>
         </x-base.menu>
