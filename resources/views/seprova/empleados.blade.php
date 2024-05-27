@@ -6,8 +6,10 @@
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <style>
         #map {
-            height: 500px;
-            width: 100%;
+            height: 300px; /* Altura del mapa */
+            width: 100%; /* Ancho del mapa */
+            border: 1px solid #ccc; /* Borde opcional para el mapa */
+            margin-top: 20px; /* Margen superior opcional */
         }
     </style>
 @endsection
@@ -249,14 +251,18 @@
                             </div>
             </div>
             <div class="col-span-12 md:col-span-12 lg:col-span-12">
-            <div id="map"></div>
-    <p>Coordenadas: <span id="coords">N/A</span></p>
+                <x-base.form-label class="font-extrabold" for="modal_input_nombre_conyugue">
+                    Nombre Completo del Conyugue
+                </x-base.form-label>
+                <x-base.form-input id="modal_input_nombre_conyugue" type="text" placeholder="Escriba el Nombre del Conyugue" />
             </div>
             <div class="col-span-12 md:col-span-12 lg:col-span-12">
                 <x-base.form-label class="font-extrabold" for="modal_input_domicilio">
-                    Domicilio
+                    Domicilio y Ubicación de Casa
                 </x-base.form-label>
                 <x-base.form-textarea rows="5" id="modal_input_domicilio" placeholder="Escriba la dirección exacta."></x-base.form-textarea>
+                <div id="map"></div>
+                <!-- <p>Coordenadas: <span id="coords">N/A</span></p> -->
             </div>
         </x-base.dialog.description>
         <x-base.dialog.footer class="bg-dark">
@@ -426,7 +432,7 @@
                     }).addTo(map);
 
                      // Establece la ruta de las imágenes de Leaflet
-                    L.Icon.Default.imagePath = "{{url('/build/assets/')}}";
+                    L.Icon.Default.imagePath = "/build/assets/";
 
                     var marker;
 
@@ -434,7 +440,7 @@
                     map.on('click', function(e) {
                         // Obtén las coordenadas del clic
                         var coords = e.latlng;
-console.log(coords)
+                        
                         // Si ya hay un marcador, actualiza su posición
                         if (marker) {
                             marker.setLatLng(coords);
@@ -444,7 +450,7 @@ console.log(coords)
                         }
 
                         // Actualiza el contenido del elemento span con las coordenadas
-                        document.getElementById('coords').textContent = `Lat: ${coords.lat}, Lng: ${coords.lng}`;
+                        //document.getElementById('coords').textContent = `Lat: ${coords.lat}, Lng: ${coords.lng}`;
                     });
                 });
 
