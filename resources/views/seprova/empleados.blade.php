@@ -187,7 +187,7 @@
                 </x-base.form-label>
                 <x-base.form-select id="modal_select_tipo_sangre" class="w-full">
                     @foreach($tipo_sangre as $row)
-                        <option id="{{$row->id}}">{{$row->nombre}}</option>
+                        <option value="{{$row->id}}">{{$row->nombre}}</option>
                     @endforeach
                 </x-base.form-select>
             </div>
@@ -197,7 +197,7 @@
                 </x-base.form-label>
                 <x-base.form-select id="modal_select_talla_camisa" class="w-full">
                     @foreach($tallas_camisas as $row)
-                        <option id="{{$row->id}}">{{$row->nombre}}</option>
+                        <option value="{{$row->id}}">{{$row->nombre}}</option>
                     @endforeach
                 </x-base.form-select>
             </div>
@@ -207,7 +207,7 @@
                 </x-base.form-label>
                 <x-base.form-select id="modal_select_talla_pantalon" class="w-full">
                     @foreach($tallas_pantalones as $row)
-                        <option id="{{$row->id}}">{{$row->nombre}}</option>
+                        <option value="{{$row->id}}">{{$row->nombre}}</option>
                     @endforeach
                 </x-base.form-select>
             </div>
@@ -371,7 +371,7 @@
             var nombre_conyugue = null;
             var domicilio = null;
             var ubicacion_casa = null;
-            var url_guardar_clientes = "{{url('/clientes/guardar')}}";
+            var url_guardar_empleado = "{{url('/empleados/guardar')}}";
             var onTomSelect = false;
             var tomSelect = null;
             var titleMsg = null;
@@ -453,6 +453,8 @@
                             marker = L.marker(coords).addTo(map);
                         }
 
+                        ubicacion_casa = coords.lat+' '+coords.lng;
+                        //alert(ubicacion_casa);
                         // Actualiza el contenido del elemento span con las coordenadas
                         //document.getElementById('coords').textContent = `Lat: ${coords.lat}, Lng: ${coords.lng}`;
                     });
@@ -515,10 +517,8 @@
                 $("#modal_input_telefono").val('');
                 $("#modal_input_numero_poliza").val('');
                 $("#modal_input_identidad").val('');
-                $("#modal_input_departamento").val(id_departamento);
                 //$("#modal_select_talla_camisa").val('');
                 $("#modal_input_domicilio").val('');
-                consultar_municipios(id_departamento);
                 accion = 1;
                 const el = document.querySelector("#modal_nuevo_empleado");
                 const modal = tailwind.Modal.getOrCreateInstance(el);
@@ -530,6 +530,7 @@
                     $('#modal_input_numero_poliza').prop('disabled', false);
                 } else {
                     $('#modal_input_numero_poliza').prop('disabled', true);
+                    $("#modal_input_numero_poliza").val('');
                 }
             });
 
@@ -540,17 +541,18 @@
                 segundo_apellido = $("#modal_input_segundo_apellido").val();
                 telefono = $("#modal_input_telefono").val();
                 identidad = $("#modal_input_identidad").val();
-                check_seguro_vida = $("#modal_checkbox_poliza").val();
+                check_seguro_vida = $("#modal_checkbox_poliza").prop('checked');
                 numero_poliza = $("#modal_input_numero_poliza").val();
                 tipo_sangre = $("#modal_select_tipo_sangre").val();
                 talla_camisa = $("#modal_select_talla_camisa").val();
                 talla_pantalon = $("#modal_select_talla_pantalon").val();
-                check_seguro_social = $("#modal_checkbox_seguro_social").val();
-                check_rap = $("#modal_checkbox_rap").val();
-                check_canon = $("#modal_checkbox_canon").val();
+                check_seguro_social = $("#modal_checkbox_seguro_social").prop('checked');
+                check_rap = $("#modal_checkbox_rap").prop('checked');
+                check_canon = $("#modal_checkbox_canon").prop('checked');
                 nombre_conyugue = $("#modal_input_nombre_conyugue").val();
                 domicilio = $("#modal_input_domicilio").val();
-                ubicacion_casa = $("#modal_input_identidad").val();
+
+                //console.log(ubicacion_casa);
                 
                 if(primer_nombre == null || primer_nombre == ''){
                     titleMsg = 'Valor Requerido'
@@ -568,25 +570,9 @@
                     return false;
                 }
 
-                if(genero == null || genero == ''){
-                    titleMsg = 'Valor Requerido'
-                    textMsg = 'Debe especificar un valor para Género.';
-                    typeMsg = 'error';
-                    notificacion()
-                    return false;
-                }
-
                 if(telefono == null || telefono == ''){
                     titleMsg = 'Valor Requerido'
                     textMsg = 'Debe especificar un valor para telefono.';
-                    typeMsg = 'error';
-                    notificacion()
-                    return false;
-                }
-
-                if(correo == null || correo == ''){
-                    titleMsg = 'Valor Requerido'
-                    textMsg = 'Debe especificar un valor para Correo Electrónico.';
                     typeMsg = 'error';
                     notificacion()
                     return false;
@@ -600,9 +586,35 @@
                     return false;
                 }
 
+                if(check_seguro_vida == null || check_seguro_vida == true){
+                    if(numero_poliza == null || numero_poliza == ''){
+                        titleMsg = 'Valor Requerido'
+                        textMsg = 'Debe especificar un valor para Número de Póliza.';
+                        typeMsg = 'error';
+                        notificacion()
+                        return false;
+                    }
+                }
+
+                if(nombre_conyugue == null || nombre_conyugue == ''){
+                    titleMsg = 'Valor Requerido'
+                    textMsg = 'Debe especificar un valor para Nombre Conyugue.';
+                    typeMsg = 'error';
+                    notificacion()
+                    return false;
+                }
+
                 if(domicilio == null || domicilio == ''){
                     titleMsg = 'Valor Requerido'
                     textMsg = 'Debe especificar un valor para Domicilio.';
+                    typeMsg = 'error';
+                    notificacion()
+                    return false;
+                }
+
+                if(ubicacion_casa == null || ubicacion_casa == ''){
+                    titleMsg = 'Valor Requerido'
+                    textMsg = 'Debe especificar un Punto Ubicación en el Mapa.';
                     typeMsg = 'error';
                     notificacion()
                     return false;
@@ -624,7 +636,7 @@
                 accion_guardar = true;
                 $.ajax({
                     type: "POST",
-                    url: url_guardar_clientes,
+                    url: url_guardar_empleado,
                     data: {
                         'accion' : accion,
                         'id' : id,
@@ -632,13 +644,19 @@
                         'segundo_nombre' : segundo_nombre,
                         'primer_apellido' : primer_apellido,
                         'segundo_apellido' : segundo_apellido,
-                        'identidad' : identidad,
-                        'genero' : genero,
                         'telefono' : telefono,
-                        'correo' : correo,
-                        'departamento' : departamento,
-                        'municipio' : municipio,
-                        'domicilio' : domicilio
+                        'identidad' : identidad,
+                        'check_seguro_vida' : check_seguro_vida,
+                        'numero_poliza' : numero_poliza,
+                        'tipo_sangre' : tipo_sangre,
+                        'talla_camisa' : talla_camisa,
+                        'talla_pantalon' : talla_pantalon,
+                        'check_seguro_social' : check_seguro_social,
+                        'check_rap' : check_rap,
+                        'check_canon' : check_canon,
+                        'nombre_conyugue' : nombre_conyugue,
+                        'domicilio' : domicilio,
+                        'ubicacion_casa' : ubicacion_casa
                     },
                     success: function(data) {
                         if (data.msgError) {
@@ -649,56 +667,56 @@
                             titleMsg = "Datos Guardados";
                             textMsg = data.msgSuccess;
                             typeMsg = "success";
-                            if(accion != 3){
-                                var row = data.clientes_list;
-                                var nuevoFila = [
-                                    row.id, row.primer_nombre+' '+row.segundo_nombre, row.primer_apellido+' '+row.segundo_apellido,
-                                    row.identidad, row.telefono, row.correo_electronico, row.genero, row.departamento+', '+row.municipio+', '+row.domicilio,
-                                    '<button class="transition duration-200 border shadow-sm inline-flex items-center justify-center rounded-md font-medium cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus-visible:outline-none dark:focus:ring-slate-700 dark:focus:ring-opacity-50 [&amp;:hover:not(:disabled)]:bg-opacity-90 [&amp;:hover:not(:disabled)]:border-opacity-90 [&amp;:not(button)]:text-center disabled:opacity-70 disabled:cursor-not-allowed text-xs py-1.5 px-2 bg-warning border-warning text-slate-900 dark:border-warning editar mb-2 mr-1 editar"'+
-                                        'data-id="'+row.id+'"'+ 
-                                        'data-primer_nombre="'+row.primer_nombre+'"'+ 
-                                        'data-segundo_nombre="'+row.segundo_nombre+'"'+ 
-                                        'data-primer_apellido="'+row.primer_apellido+'"'+ 
-                                        'data-segundo_apellido="'+row.segundo_apellido+'"'+ 
-                                        'data-identidad="'+row.identidad+'"'+
-                                        'data-telefono="'+row.telefono+'"'+
-                                        'data-correo_electronico="'+row.correo_electronico+'"'+
-                                        'data-genero="'+row.id_genero+'"'+
-                                        'data-departamento="'+row.id_departamento+'"'+
-                                        'data-municipio="'+row.id_municipio+'"'+
-                                        'data-domicilio="'+row.domicilio+'"'+
-                                    '><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" icon-name="edit" data-lucide="edit" class="lucide lucide-edit stroke-1.5 h-4 w-4"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z">'+
-                                    '</path></svg></button>'+
-                                    '<button class="transition duration-200 border shadow-sm inline-flex items-center justify-center rounded-md font-medium cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus-visible:outline-none dark:focus:ring-slate-700 dark:focus:ring-opacity-50 [&amp;:hover:not(:disabled)]:bg-opacity-90 [&amp;:hover:not(:disabled)]:border-opacity-90 [&amp;:not(button)]:text-center disabled:opacity-70 disabled:cursor-not-allowed text-xs py-1.5 px-2 bg-danger border-danger text-white dark:border-danger eliminar mb-2 mr-1 eliminar"'+
-                                        'data-id="'+row.id+'"'+ 
-                                        'data-primer_nombre="'+row.primer_nombre+'"'+ 
-                                        'data-segundo_nombre="'+row.segundo_nombre+'"'+ 
-                                        'data-primer_apellido="'+row.primer_apellido+'"'+ 
-                                        'data-segundo_apellido="'+row.segundo_apellido+'"'+ 
-                                        'data-identidad="'+row.identidad+'"'+
-                                        'data-telefono="'+row.telefono+'"'+
-                                        'data-correo_electronico="'+row.correo_electronico+'"'+
-                                        'data-genero="'+row.id_genero+'"'+
-                                        'data-departamento="'+row.id_departamento+'"'+
-                                        'data-municipio="'+row.id_municipio+'"'+
-                                        'data-domicilio="'+row.domicilio+'"'+
-                                    '><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" icon-name="trash" data-lucide="trash" class="lucide lucide-trash stroke-1.5 h-4 w-4"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg></button>'
-                                ]; 
-                            }
-                            if (accion == 1) { 
-                                $('#sdatatable').DataTable().row.add(nuevoFila).draw();
-                            } else if (accion == 2) { 
-                                $('#sdatatable').DataTable().row(rowNumber).data(nuevoFila);
-                            } else if (accion == 3) {
-                                $('#sdatatable').DataTable().row(rowNumber).remove().draw();
-                            }
+                            // if(accion != 3){
+                            //     var row = data.clientes_list;
+                            //     var nuevoFila = [
+                            //         row.id, row.primer_nombre+' '+row.segundo_nombre, row.primer_apellido+' '+row.segundo_apellido,
+                            //         row.identidad, row.telefono, row.correo_electronico, row.genero, row.departamento+', '+row.municipio+', '+row.domicilio,
+                            //         '<button class="transition duration-200 border shadow-sm inline-flex items-center justify-center rounded-md font-medium cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus-visible:outline-none dark:focus:ring-slate-700 dark:focus:ring-opacity-50 [&amp;:hover:not(:disabled)]:bg-opacity-90 [&amp;:hover:not(:disabled)]:border-opacity-90 [&amp;:not(button)]:text-center disabled:opacity-70 disabled:cursor-not-allowed text-xs py-1.5 px-2 bg-warning border-warning text-slate-900 dark:border-warning editar mb-2 mr-1 editar"'+
+                            //             'data-id="'+row.id+'"'+ 
+                            //             'data-primer_nombre="'+row.primer_nombre+'"'+ 
+                            //             'data-segundo_nombre="'+row.segundo_nombre+'"'+ 
+                            //             'data-primer_apellido="'+row.primer_apellido+'"'+ 
+                            //             'data-segundo_apellido="'+row.segundo_apellido+'"'+ 
+                            //             'data-identidad="'+row.identidad+'"'+
+                            //             'data-telefono="'+row.telefono+'"'+
+                            //             'data-correo_electronico="'+row.correo_electronico+'"'+
+                            //             'data-genero="'+row.id_genero+'"'+
+                            //             'data-departamento="'+row.id_departamento+'"'+
+                            //             'data-municipio="'+row.id_municipio+'"'+
+                            //             'data-domicilio="'+row.domicilio+'"'+
+                            //         '><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" icon-name="edit" data-lucide="edit" class="lucide lucide-edit stroke-1.5 h-4 w-4"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z">'+
+                            //         '</path></svg></button>'+
+                            //         '<button class="transition duration-200 border shadow-sm inline-flex items-center justify-center rounded-md font-medium cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus-visible:outline-none dark:focus:ring-slate-700 dark:focus:ring-opacity-50 [&amp;:hover:not(:disabled)]:bg-opacity-90 [&amp;:hover:not(:disabled)]:border-opacity-90 [&amp;:not(button)]:text-center disabled:opacity-70 disabled:cursor-not-allowed text-xs py-1.5 px-2 bg-danger border-danger text-white dark:border-danger eliminar mb-2 mr-1 eliminar"'+
+                            //             'data-id="'+row.id+'"'+ 
+                            //             'data-primer_nombre="'+row.primer_nombre+'"'+ 
+                            //             'data-segundo_nombre="'+row.segundo_nombre+'"'+ 
+                            //             'data-primer_apellido="'+row.primer_apellido+'"'+ 
+                            //             'data-segundo_apellido="'+row.segundo_apellido+'"'+ 
+                            //             'data-identidad="'+row.identidad+'"'+
+                            //             'data-telefono="'+row.telefono+'"'+
+                            //             'data-correo_electronico="'+row.correo_electronico+'"'+
+                            //             'data-genero="'+row.id_genero+'"'+
+                            //             'data-departamento="'+row.id_departamento+'"'+
+                            //             'data-municipio="'+row.id_municipio+'"'+
+                            //             'data-domicilio="'+row.domicilio+'"'+
+                            //         '><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" icon-name="trash" data-lucide="trash" class="lucide lucide-trash stroke-1.5 h-4 w-4"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg></button>'
+                            //     ]; 
+                            // }
+                            // if (accion == 1) { 
+                            //     $('#sdatatable').DataTable().row.add(nuevoFila).draw();
+                            // } else if (accion == 2) { 
+                            //     $('#sdatatable').DataTable().row(rowNumber).data(nuevoFila);
+                            // } else if (accion == 3) {
+                            //     $('#sdatatable').DataTable().row(rowNumber).remove().draw();
+                            // }
                             
                         }
                         notificacion(); 
                         accion_guardar = false;
-                        const el = document.querySelector("#modal_nuevo_empleado");
-                        const modal = tailwind.Modal.getOrCreateInstance(el);
-                        modal.hide();
+                        // const el = document.querySelector("#modal_nuevo_empleado");
+                        // const modal = tailwind.Modal.getOrCreateInstance(el);
+                        // modal.hide();
                     },
                 });
             }

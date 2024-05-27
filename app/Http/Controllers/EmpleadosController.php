@@ -77,4 +77,147 @@ class EmpleadosController extends Controller
                 ->with('tallas_pantalones', $tallas_pantalones)
                 ->with('tipo_sangre', $tipo_sangre);
     }
+
+    public function guardar_empleados(Request $request){
+        $accion = $request->accion;
+        $id = $request->id;
+        $primer_nombre = $request->primer_nombre;
+        $segundo_nombre = $request->segundo_nombre;
+        $primer_apellido = $request->primer_apellido;
+        $segundo_apellido = $request->segundo_apellido;
+        $telefono = $request->telefono;
+        $identidad = $request->identidad;
+        $check_seguro_vida = $request->check_seguro_vida;
+        $numero_poliza = $request->numero_poliza;
+        $tipo_sangre = $request->tipo_sangre;
+        $talla_camisa = $request->talla_camisa;
+        $talla_pantalon = $request->talla_pantalon;
+        $check_seguro_social = ($request->check_seguro_social == 'true') ? 1 : 2;
+        $check_rap =  ($request->check_rap == 'true') ? 1 : 2;
+        $check_canon = ($request->check_canon == 'true') ? 1 : 2;
+        $nombre_conyugue = $request->nombre_conyugue;
+        $domicilio = $request->domicilio;
+        $ubicacion_casa = $request->ubicacion_casa;
+        $empleados_list = null;
+        $msgError = null;
+        $msgSuccess = null;
+
+        if ($id == null && $accion == 2) {
+            $accion = 1;
+        }
+
+        DB::beginTransaction();
+        try {
+            //throw new exception($check_seguro_social, true);
+            if ($accion == 1) {
+                $empleado = collect(\DB::select("INSERT INTO
+                            PUBLIC.EMPLEADOS (
+                                PRIMER_NOMBRE,
+                                SEGUNDO_NOMBRE,
+                                PRIMER_APELLIDO,
+                                SEGUNDO_APELLIDO,
+                                IDENTIDAD,
+                                TELEFONO,
+                                DIRECCION,
+                                POLIZA_SEGURO,
+                                SEGURO_SOCIAL,
+                                RAP,
+                                FOTO,
+                                DECLARADO_CANON,
+                                ID_TALLA_CAMISA,
+                                ID_TALLA_PANTALON,
+                                ID_TIPO_SANGRE,
+                                NOMBRE_CONYUGUE,
+                                UBICACION_CASA
+                            )
+                        VALUES
+                            (:primer_nombre, :segundo_nombre, :primer_apellido, :segundo_apellido, :identidad, 
+                            :telefono, :domicilio, :numero_poliza, :check_seguro_social, :check_rap, null, :check_canon, 
+                            :talla_camisa, :talla_pantalon, :tipo_sangre, :nombre_conyugue, :ubicacion_casa)
+                    returning id;",
+                    ["primer_nombre" => $primer_nombre,
+                    "segundo_nombre" => $segundo_nombre,
+                    "primer_apellido" => $primer_apellido,
+                    "segundo_apellido" => $segundo_apellido,
+                    "telefono" => $telefono,
+                    "identidad" => $identidad,
+                    "numero_poliza" => $numero_poliza,
+                    "tipo_sangre" => $tipo_sangre,
+                    "talla_camisa" => $talla_camisa,
+                    "talla_pantalon" => $talla_pantalon,
+                    "check_seguro_social" => $check_seguro_social,
+                    "check_rap" => $check_rap,
+                    "check_canon" => $check_canon,
+                    "nombre_conyugue" => $nombre_conyugue,
+                    "domicilio" => $domicilio,
+                    "ubicacion_casa" => $ubicacion_casa]))->first();
+                
+                $msgSuccess = "Empleado '".$empleado->id."' Guardado Exitosamente.";
+                $id = $empleado->id;
+            }else if ($accion == 2) {
+                DB::select("UPDATE administracion.via_zonas set
+                     nombre=:nombre, descripcion=:descripcion, update_at=now()
+                    WHERE id = :id;",
+                    ["id" => $id, "nombre" => $nombre, "descripcion" => $descripcion]);
+                $estatus = true;
+                $msgSuccess = "Empleado " . $id . " Actualizado Exitosamente.";
+            }else if ($accion == 3) {
+                DB::select("UPDATE administracion.via_zonas set deleted_at=now() WHERE id = :id;", ["id" => $id]);
+                $estatus = true;
+                $msgSuccess = "Empleado " . $id . " Eliminado Exitosamente.";
+            }else{
+                $estatus = false;
+                $msgError = "Acción inválida";
+            }
+            $empleados_list = collect(\DB::select("SELECT
+                        E.ID,
+                        E.PRIMER_NOMBRE,
+                        E.SEGUNDO_NOMBRE,
+                        E.PRIMER_APELLIDO,
+                        E.SEGUNDO_APELLIDO,
+                        E.IDENTIDAD,
+                        E.TELEFONO,
+                        E.DIRECCION,
+                        E.POLIZA_SEGURO,
+                        E.SEGURO_SOCIAL,
+                        CASE
+                            WHEN E.SEGURO_SOCIAL = 1 THEN 'Inscrito'
+                            ELSE 'No Inscrito'
+                        END SEGURO_SOCIAL_INSCRIPCION,
+                        E.RAP,
+                        CASE
+                            WHEN E.RAP = 1 THEN 'Inscrito'
+                            ELSE 'No Inscrito'
+                        END RAP_INSCRIPCION,
+                        E.FOTO,
+                        E.DECLARADO_CANON,
+                        CASE
+                            WHEN E.DECLARADO_CANON = 1 THEN 'Declarado'
+                            ELSE 'No Declarado'
+                        END DECLARADO_CANON_DECLARACION,
+                        E.ID_TALLA_CAMISA,
+                        TC.NOMBRE TALLA_CAMISA,
+                        E.ID_TALLA_PANTALON,
+                        TP.NOMBRE TALLA_PANTALON,
+                        E.ID_TIPO_SANGRE,
+                        TS.NOMBRE TIPO_SANGRE,
+                        E.NOMBRE_CONYUGUE,
+                        E.UBICACION_CASA,
+                        E.CREATED_AT
+                    FROM
+                        PUBLIC.EMPLEADOS E
+                        JOIN TALLAS_CAMISAS TC ON E.ID_TALLA_CAMISA = TC.ID
+                        JOIN TALLAS_PANTALONES TP ON E.ID_TALLA_PANTALON = TP.ID
+                        JOIN TIPOS_SANGRE TS ON E.ID_TIPO_SANGRE = TS.ID
+                    WHERE
+                        E.DELETED_AT IS NULL
+                        AND E.ID = :id;", ["id" => $id]))->first();
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollback();
+            $estatus = false;
+            $msgError = $e->getMessage();
+        }
+        return response()->json(["estatus"=>$estatus,"msgSuccess"=>$msgSuccess,"msgError"=>$msgError, "empleados_list"=>$empleados_list]);
+    }
 }
