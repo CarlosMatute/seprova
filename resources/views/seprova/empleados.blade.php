@@ -56,7 +56,7 @@
     <div class="scrollbar-hidden overflow-x-auto">
         <table id="sdatatable" class="display datatable" style="width:100%">
             <thead>
-                <tr>
+                <tr class="bg-dark text-white">
                     <th>ID</th>
                     <th>Nombres</th>
                     <th>Apellidos</th>
@@ -182,10 +182,10 @@
                 <x-base.form-input disabled id="modal_input_numero_poliza" type="number" placeholder="Escriba el Número de Póliza" />
             </div>
             <div class="col-span-12 md:col-span-12 lg:col-span-2">
-                <x-base.form-label class="font-extrabold" for="modal_select_talla_camisa">
+                <x-base.form-label class="font-extrabold" for="modal_select_tipo_sangre">
                     Tipo de Sangre
                 </x-base.form-label>
-                <x-base.form-select id="modal_select_talla_camisa" class="w-full" data-placeholder="Selección de Talla">
+                <x-base.form-select id="modal_select_tipo_sangre" class="w-full">
                     @foreach($tipo_sangre as $row)
                         <option id="{{$row->id}}">{{$row->nombre}}</option>
                     @endforeach
@@ -195,56 +195,56 @@
                 <x-base.form-label class="font-extrabold" for="modal_select_talla_camisa">
                     Talla de Camisa
                 </x-base.form-label>
-                <x-base.form-select id="modal_select_talla_camisa" class="w-full" data-placeholder="Selección de Talla">
+                <x-base.form-select id="modal_select_talla_camisa" class="w-full">
                     @foreach($tallas_camisas as $row)
                         <option id="{{$row->id}}">{{$row->nombre}}</option>
                     @endforeach
                 </x-base.form-select>
             </div>
             <div class="col-span-12 md:col-span-12 lg:col-span-2">
-                <x-base.form-label class="font-extrabold" for="modal_select_talla_camisa">
+                <x-base.form-label class="font-extrabold" for="modal_select_talla_pantalon">
                     Talla de Pantalón
                 </x-base.form-label>
-                <x-base.form-select id="modal_select_talla_camisa" class="w-full" data-placeholder="Selección de Talla">
+                <x-base.form-select id="modal_select_talla_pantalon" class="w-full">
                     @foreach($tallas_pantalones as $row)
                         <option id="{{$row->id}}">{{$row->nombre}}</option>
                     @endforeach
                 </x-base.form-select>
             </div>
             <div class="col-span-12 md:col-span-12 lg:col-span-6">
-            <x-base.form-label class="font-extrabold" for="modal_select_talla_camisa">
+            <x-base.form-label class="font-extrabold">
                     Marque las opciones que aplica el empleado
                 </x-base.form-label>
             <div class="mt-2 flex flex-col sm:flex-row">
                                 <x-base.form-check class="mr-2">
                                     <x-base.form-check.input
-                                        id="checkbox-switch-4"
+                                        id="modal_checkbox_seguro_social"
                                         type="checkbox"
                                         value=""
                                     />
-                                    <x-base.form-check.label for="checkbox-switch-4">
+                                    <x-base.form-check.label for="modal_checkbox_seguro_social">
                                         Seguro Social
                                     </x-base.form-check.label>
                                 </x-base.form-check>
                                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                 <x-base.form-check class="mt-2 mr-2 sm:mt-0">
                                     <x-base.form-check.input
-                                        id="checkbox-switch-5"
+                                        id="modal_checkbox_rap"
                                         type="checkbox"
                                         value=""
                                     />
-                                    <x-base.form-check.label for="checkbox-switch-5">
+                                    <x-base.form-check.label for="modal_checkbox_rap">
                                         RAP
                                     </x-base.form-check.label>
                                 </x-base.form-check>
                                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                 <x-base.form-check class="mt-2 mr-2 sm:mt-0">
                                     <x-base.form-check.input
-                                        id="checkbox-switch-6"
+                                        id="modal_checkbox_canon"
                                         type="checkbox"
                                         value=""
                                     />
-                                    <x-base.form-check.label for="checkbox-switch-6">
+                                    <x-base.form-check.label for="modal_checkbox_canon">
                                         CANON
                                     </x-base.form-check.label>
                                 </x-base.form-check>
@@ -358,15 +358,19 @@
             var segundo_nombre = null;
             var primer_apellido = null;
             var segundo_apellido = null;
-            var genero = null;
             var telefono = null;
-            var correo = null;
             var identidad = null;
-            var departamento = null;
-            var municipio = null;
+            var check_seguro_vida = null;
+            var numero_poliza = null;
+            var tipo_sangre = null;
+            var talla_camisa = null;
+            var talla_pantalon = null;
+            var check_seguro_social = null;
+            var check_rap = null;
+            var check_canon = null;
+            var nombre_conyugue = null;
             var domicilio = null;
-            var id_departamento = null;
-            var url_consultar_municipios = "{{url('/departamentos-municipios')}}";
+            var ubicacion_casa = null;
             var url_guardar_clientes = "{{url('/clientes/guardar')}}";
             var onTomSelect = false;
             var tomSelect = null;
@@ -534,13 +538,19 @@
                 segundo_nombre = $("#modal_input_segundo_nombre").val();
                 primer_apellido = $("#modal_input_primer_apellido").val();
                 segundo_apellido = $("#modal_input_segundo_apellido").val();
-                genero = $("#modal_input_genero").val();
                 telefono = $("#modal_input_telefono").val();
-                correo = $("#modal_input_numero_poliza").val();
                 identidad = $("#modal_input_identidad").val();
-                departamento = $("#modal_input_departamento").val();
-                municipio = $("#modal_select_talla_camisa").val();
+                check_seguro_vida = $("#modal_checkbox_poliza").val();
+                numero_poliza = $("#modal_input_numero_poliza").val();
+                tipo_sangre = $("#modal_select_tipo_sangre").val();
+                talla_camisa = $("#modal_select_talla_camisa").val();
+                talla_pantalon = $("#modal_select_talla_pantalon").val();
+                check_seguro_social = $("#modal_checkbox_seguro_social").val();
+                check_rap = $("#modal_checkbox_rap").val();
+                check_canon = $("#modal_checkbox_canon").val();
+                nombre_conyugue = $("#modal_input_nombre_conyugue").val();
                 domicilio = $("#modal_input_domicilio").val();
+                ubicacion_casa = $("#modal_input_identidad").val();
                 
                 if(primer_nombre == null || primer_nombre == ''){
                     titleMsg = 'Valor Requerido'

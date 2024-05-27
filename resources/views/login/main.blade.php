@@ -1,7 +1,7 @@
 @extends('../layouts/' . $layout)
 
 @section('head')
-    <title>Login - Icewall - Tailwind HTML Admin Template</title>
+    <title>SEPROVA</title>
 @endsection
 
 @section('content')
