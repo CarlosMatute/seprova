@@ -87,6 +87,16 @@
                                 data-segundo_apellido="{{$row->segundo_apellido}}" 
                                 data-identidad="{{$row->identidad}}"
                                 data-telefono="{{$row->telefono}}"
+                                data-poliza_seguro="{{$row->poliza_seguro}}"
+                                data-direccion="{{$row->direccion}}"
+                                data-seguro_social="{{$row->seguro_social}}"
+                                data-rap="{{$row->rap}}"
+                                data-declarado_canon="{{$row->declarado_canon}}"
+                                data-id_talla_camisa="{{$row->id_talla_camisa}}"
+                                data-id_talla_pantalon="{{$row->id_talla_pantalon}}"
+                                data-id_tipo_sangre="{{$row->id_tipo_sangre}}"
+                                data-nombre_conyugue="{{$row->nombre_conyugue}}"
+                                data-ubicacion_casa="{{$row->ubicacion_casa}}"
                             >
                                 <x-base.lucide
                                     class="h-4 w-4"
@@ -104,6 +114,16 @@
                                 data-segundo_apellido="{{$row->segundo_apellido}}" 
                                 data-identidad="{{$row->identidad}}"
                                 data-telefono="{{$row->telefono}}"
+                                data-poliza_seguro="{{$row->poliza_seguro}}"
+                                data-direccion="{{$row->direccion}}"
+                                data-seguro_social="{{$row->seguro_social}}"
+                                data-rap="{{$row->rap}}"
+                                data-declarado_canon="{{$row->declarado_canon}}"
+                                data-id_talla_camisa="{{$row->id_talla_camisa}}"
+                                data-id_talla_pantalon="{{$row->id_talla_pantalon}}"
+                                data-id_tipo_sangre="{{$row->id_tipo_sangre}}"
+                                data-nombre_conyugue="{{$row->nombre_conyugue}}"
+                                data-ubicacion_casa="{{$row->ubicacion_casa}}"
                             >
                                 <x-base.lucide
                                     class="h-4 w-4"
@@ -371,6 +391,7 @@
             var nombre_conyugue = null;
             var domicilio = null;
             var ubicacion_casa = null;
+            var map = null;
             var url_guardar_empleado = "{{url('/empleados/guardar')}}";
             var onTomSelect = false;
             var tomSelect = null;
@@ -428,7 +449,7 @@
 
             document.addEventListener('DOMContentLoaded', function() {
                     // Inicializa el mapa
-                    var map = L.map('map').setView([14.105713888889, -87.204008333333], 13);
+                    map = L.map('map').setView([14.105713888889, -87.204008333333], 13);
 
                     // Añade una capa de mapa (OpenStreetMap en este caso)
                     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -448,13 +469,14 @@
                         // Si ya hay un marcador, actualiza su posición
                         if (marker) {
                             marker.setLatLng(coords);
+                            //{"lat": 14.119429333513594,"lng": -87.18672752380373}
                         } else {
                             // Si no hay marcador, crea uno nuevo
                             marker = L.marker(coords).addTo(map);
                         }
 
                         ubicacion_casa = coords.lat+' '+coords.lng;
-                        //alert(ubicacion_casa);
+                        //console.log(coords);
                         // Actualiza el contenido del elemento span con las coordenadas
                         //document.getElementById('coords').textContent = `Lat: ${coords.lat}, Lng: ${coords.lng}`;
                     });
@@ -474,23 +496,41 @@
                 segundo_nombre = $(this).data('segundo_nombre');
                 primer_apellido = $(this).data('primer_apellido');
                 segundo_apellido = $(this).data('segundo_apellido');
-                genero = $(this).data('genero');
                 telefono = $(this).data('telefono');
-                correo = $(this).data('correo_electronico');
                 identidad = $(this).data('identidad');
-                departamento = $(this).data('departamento');
-                municipio = $(this).data('municipio');
-                domicilio = $(this).data('domicilio');
+                numero_poliza = $(this).data('poliza_seguro');
+                if(numero_poliza != null || numero_poliza != ''){
+                    $('#modal_checkbox_poliza').prop('checked', true);
+                    $('#modal_input_numero_poliza').prop('disabled', false);
+                }
+                tipo_sangre = $(this).data('id_tipo_sangre');
+                talla_camisa = $(this).data('id_talla_camisa');
+                talla_pantalon = $(this).data('id_talla_pantalon');
+                check_seguro_social = $(this).data('seguro_social');
+                if(check_seguro_social == 1){
+                    $('#modal_checkbox_seguro_social').prop('checked', true);
+                }
+                check_rap = $(this).data('rap');
+                if(check_rap == 1){
+                    $('#modal_checkbox_rap').prop('checked', true);
+                }
+                check_canon = $(this).data('declarado_canon');
+                if(check_canon == 1){
+                    $('#modal_checkbox_canon').prop('checked', true);
+                }
+                nombre_conyugue = $(this).data('nombre_conyugue');
+                domicilio = $(this).data('direccion');
                 $("#modal_input_primer_nombre").val(primer_nombre);
                 $("#modal_input_segundo_nombre").val(segundo_nombre);
                 $("#modal_input_primer_apellido").val(primer_apellido);
                 $("#modal_input_segundo_apellido").val(segundo_apellido);
-                $("#modal_input_genero").val(genero);
                 $("#modal_input_telefono").val(telefono);
-                $("#modal_input_numero_poliza").val(correo);
                 $("#modal_input_identidad").val(identidad);
-                $("#modal_input_departamento").val(departamento);
-                $("#modal_select_talla_camisa").val(municipio);
+                $("#modal_input_numero_poliza").val(numero_poliza);
+                $("#modal_select_tipo_sangre").val(tipo_sangre);
+                $("#modal_select_talla_camisa").val(talla_camisa);
+                $("#modal_select_talla_pantalon").val(talla_pantalon);
+                $("#modal_input_nombre_conyugue").val(nombre_conyugue);
                 $("#modal_input_domicilio").val(domicilio);
                 const el = document.querySelector("#modal_nuevo_empleado");
                 const modal = tailwind.Modal.getOrCreateInstance(el);
