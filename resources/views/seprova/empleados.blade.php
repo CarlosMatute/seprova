@@ -289,43 +289,13 @@
             <x-base.button size="sm" class="mr-1 w-20" data-tw-dismiss="modal" type="button" variant="danger">
                 Cancelar
             </x-base.button>
-            <x-base.button size="sm" class="w-20" type="button" variant="primary" id="modal_btn_guardar_clientes">
+            <x-base.button size="sm" class="w-20" type="button" variant="primary" id="modal_btn_guardar_empleados">
                 Guardar
             </x-base.button>
         </x-base.dialog.footer>
     </x-base.dialog.panel>
 </x-base.dialog>
 <!-- END: Modal Content -->
-
-<x-base.dialog id="modal_opciones">
-    <x-base.dialog.panel>
-        <x-base.dialog.title>
-            <h2 class="mr-auto text-base font-medium">
-                <strong>Opciones</strong>
-            </h2>
-        </x-base.dialog.title>
-        <x-base.tab.list class="flex-col justify-center sm:flex-row p-10 text-center" variant="boxed-tabs">
-            <x-base.tab id="btn_id_solicitud" :fullWidth="false">
-                <x-base.tab.button class="mb-2 w-full cursor-pointer px-0 py-2 text-center text-primary sm:mx-2 sm:mb-0 sm:w-20">
-                    <x-base.lucide class="mx-auto mb-2 block h-6 w-6" icon="Printer" />
-                    <strong>Imprimir</strong>
-                </x-base.tab.button>
-            </x-base.tab>
-            <x-base.tab :fullWidth="false">
-                <x-base.tab.button id="btn_editar" class="mb-2 w-full cursor-pointer px-0 py-2 text-center text-warning sm:mx-2 sm:mb-0 sm:w-20">
-                    <x-base.lucide class="mx-auto mb-2 block h-6 w-6" icon="CheckSquare" />
-                    <strong>Editar</strong>
-                </x-base.tab.button>
-            </x-base.tab>
-            <x-base.tab id="btn_modal_eliminar" :fullWidth="false">
-                <x-base.tab.button class="mb-2 w-full cursor-pointer px-0 py-2 text-center text-danger sm:mx-2 sm:mb-0 sm:w-20">
-                    <x-base.lucide class="mx-auto mb-2 block h-6 w-6" icon="Trash" />
-                    <strong>Eliminar</strong>
-                </x-base.tab.button>
-            </x-base.tab>
-        </x-base.tab.list>
-    </x-base.dialog.panel>
-</x-base.dialog>
 
 <!-- BEGIN: Modal Content -->
 <x-base.dialog id="modal_eliminar">
@@ -334,7 +304,7 @@
             <x-base.lucide class="mx-auto mt-3 h-16 w-16 text-danger" icon="XCircle" />
             <div class="mt-5 text-3xl">¡Advertencia!</div>
             <div class="mt-2 text-slate-500">
-                ¿Realmente desea eliminar este Cliente?<br />
+                ¿Realmente desea eliminar a este Empleado?<br />
                 <div id="id_registro"></div>
             </div>
         </div>
@@ -392,6 +362,7 @@
             var domicilio = null;
             var ubicacion_casa = null;
             var map = null;
+            var marker = null;
             var url_guardar_empleado = "{{url('/empleados/guardar')}}";
             var onTomSelect = false;
             var tomSelect = null;
@@ -440,16 +411,11 @@
                         "processing": true,
                         serverSide: false,
                     });
-
-                    //consultar_municipios(id_departamento);
-
-                
-
             });
 
             document.addEventListener('DOMContentLoaded', function() {
                     // Inicializa el mapa
-                    map = L.map('map').setView([14.105713888889, -87.204008333333], 13);
+                    map = L.map('map').setView([15.199999, -86.241905], 6);
 
                     // Añade una capa de mapa (OpenStreetMap en este caso)
                     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -459,7 +425,6 @@
                      // Establece la ruta de las imágenes de Leaflet
                     L.Icon.Default.imagePath = "/build/assets/";
 
-                    var marker;
 
                     // Añade un evento de clic al mapa
                     map.on('click', function(e) {
@@ -475,8 +440,9 @@
                             marker = L.marker(coords).addTo(map);
                         }
 
-                        ubicacion_casa = coords.lat+' '+coords.lng;
-                        //console.log(coords);
+                        ubicacion_casa = coords;
+                        ubicacion_casa = '{"lat": '+ubicacion_casa.lat.toString() + ', "lng": ' + ubicacion_casa.lng.toString()+'}';
+                        //console.log(ubicacion_casa);
                         // Actualiza el contenido del elemento span con las coordenadas
                         //document.getElementById('coords').textContent = `Lat: ${coords.lat}, Lng: ${coords.lng}`;
                     });
@@ -499,7 +465,10 @@
                 telefono = $(this).data('telefono');
                 identidad = $(this).data('identidad');
                 numero_poliza = $(this).data('poliza_seguro');
-                if(numero_poliza != null || numero_poliza != ''){
+                if(numero_poliza == null || numero_poliza == ''){
+                    $('#modal_checkbox_poliza').prop('checked', false);
+                    $('#modal_input_numero_poliza').prop('disabled', true);
+                }else{
                     $('#modal_checkbox_poliza').prop('checked', true);
                     $('#modal_input_numero_poliza').prop('disabled', false);
                 }
@@ -509,17 +478,24 @@
                 check_seguro_social = $(this).data('seguro_social');
                 if(check_seguro_social == 1){
                     $('#modal_checkbox_seguro_social').prop('checked', true);
+                }else{
+                    $('#modal_checkbox_seguro_social').prop('checked', false);
                 }
                 check_rap = $(this).data('rap');
                 if(check_rap == 1){
                     $('#modal_checkbox_rap').prop('checked', true);
+                }else{
+                    $('#modal_checkbox_rap').prop('checked', false);
                 }
                 check_canon = $(this).data('declarado_canon');
                 if(check_canon == 1){
                     $('#modal_checkbox_canon').prop('checked', true);
+                }else{
+                    $('#modal_checkbox_canon').prop('checked', false);
                 }
                 nombre_conyugue = $(this).data('nombre_conyugue');
                 domicilio = $(this).data('direccion');
+                ubicacion_casa = $(this).data('ubicacion_casa');
                 $("#modal_input_primer_nombre").val(primer_nombre);
                 $("#modal_input_segundo_nombre").val(segundo_nombre);
                 $("#modal_input_primer_apellido").val(primer_apellido);
@@ -532,33 +508,49 @@
                 $("#modal_select_talla_pantalon").val(talla_pantalon);
                 $("#modal_input_nombre_conyugue").val(nombre_conyugue);
                 $("#modal_input_domicilio").val(domicilio);
+                //console.log(ubicacion_casa);
+                if (marker) {
+                    marker.setLatLng(ubicacion_casa);
+                } else {
+                    marker = L.marker(ubicacion_casa).addTo(map);
+                }
+                ubicacion_casa = '{"lat": '+ubicacion_casa.lat.toString() + ', "lng": ' + ubicacion_casa.lng.toString()+'}';
                 const el = document.querySelector("#modal_nuevo_empleado");
                 const modal = tailwind.Modal.getOrCreateInstance(el);
                 modal.show();
             });
 
             $('#sdatatable tbody').on('click', '.eliminar', function() {
-                var fila = $('#sdatatable').DataTable().row($(this).parents('tr'));
-                var data = fila.data();
                 accion = 3;
-                numerofila = fila.index();
-                id = data[0];
+                id = $(this).data('id');;
                 const el = document.querySelector("#modal_eliminar");
                 const modal = tailwind.Modal.getOrCreateInstance(el);
                 modal.show(); 
             });
 
             $("#btn_nuevo_empleado").on("click", function (event) {
+                if (marker) {
+                    map.removeLayer(marker);
+                    marker = null;
+                }
                 $("#modal_input_primer_nombre").val('');
                 $("#modal_input_segundo_nombre").val('');
                 $("#modal_input_primer_apellido").val('');
                 $("#modal_input_segundo_apellido").val('');
-                //$("#modal_input_genero").val('');
                 $("#modal_input_telefono").val('');
-                $("#modal_input_numero_poliza").val('');
                 $("#modal_input_identidad").val('');
-                //$("#modal_select_talla_camisa").val('');
+                $('#modal_checkbox_poliza').prop('checked', false);
+                $('#modal_input_numero_poliza').prop('disabled', true);
+                $("#modal_input_numero_poliza").val('');
+                $("#modal_select_tipo_sangre").val('');
+                $("#modal_select_talla_camisa").val('');
+                $("#modal_select_talla_pantalon").val('');
+                $('#modal_checkbox_seguro_social').prop('checked', false);
+                $('#modal_checkbox_rap').prop('checked', false);
+                $('#modal_checkbox_canon').prop('checked', false);
+                $("#modal_input_nombre_conyugue").val('');
                 $("#modal_input_domicilio").val('');
+                
                 accion = 1;
                 const el = document.querySelector("#modal_nuevo_empleado");
                 const modal = tailwind.Modal.getOrCreateInstance(el);
@@ -574,7 +566,7 @@
                 }
             });
 
-            $("#modal_btn_guardar_clientes").on("click", function () {
+            $("#modal_btn_guardar_empleados").on("click", function () {
                 primer_nombre = $("#modal_input_primer_nombre").val();
                 segundo_nombre = $("#modal_input_segundo_nombre").val();
                 primer_apellido = $("#modal_input_primer_apellido").val();
@@ -661,18 +653,18 @@
                 }
                 
                 if(!accion_guardar){
-                    guardar_clientes();
+                    guardar_empleados();
                 }
             });
 
             $("#btn_eliminar").on("click", function () {
-                guardar_clientes();
+                guardar_empleados();
                 const el = document.querySelector("#modal_eliminar");
                 const modal = tailwind.Modal.getOrCreateInstance(el);
                 modal.hide();
             });
 
-            function guardar_clientes() {
+            function guardar_empleados() {
                 accion_guardar = true;
                 $.ajax({
                     type: "POST",
@@ -707,97 +699,70 @@
                             titleMsg = "Datos Guardados";
                             textMsg = data.msgSuccess;
                             typeMsg = "success";
-                            // if(accion != 3){
-                            //     var row = data.clientes_list;
-                            //     var nuevoFila = [
-                            //         row.id, row.primer_nombre+' '+row.segundo_nombre, row.primer_apellido+' '+row.segundo_apellido,
-                            //         row.identidad, row.telefono, row.correo_electronico, row.genero, row.departamento+', '+row.municipio+', '+row.domicilio,
-                            //         '<button class="transition duration-200 border shadow-sm inline-flex items-center justify-center rounded-md font-medium cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus-visible:outline-none dark:focus:ring-slate-700 dark:focus:ring-opacity-50 [&amp;:hover:not(:disabled)]:bg-opacity-90 [&amp;:hover:not(:disabled)]:border-opacity-90 [&amp;:not(button)]:text-center disabled:opacity-70 disabled:cursor-not-allowed text-xs py-1.5 px-2 bg-warning border-warning text-slate-900 dark:border-warning editar mb-2 mr-1 editar"'+
-                            //             'data-id="'+row.id+'"'+ 
-                            //             'data-primer_nombre="'+row.primer_nombre+'"'+ 
-                            //             'data-segundo_nombre="'+row.segundo_nombre+'"'+ 
-                            //             'data-primer_apellido="'+row.primer_apellido+'"'+ 
-                            //             'data-segundo_apellido="'+row.segundo_apellido+'"'+ 
-                            //             'data-identidad="'+row.identidad+'"'+
-                            //             'data-telefono="'+row.telefono+'"'+
-                            //             'data-correo_electronico="'+row.correo_electronico+'"'+
-                            //             'data-genero="'+row.id_genero+'"'+
-                            //             'data-departamento="'+row.id_departamento+'"'+
-                            //             'data-municipio="'+row.id_municipio+'"'+
-                            //             'data-domicilio="'+row.domicilio+'"'+
-                            //         '><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" icon-name="edit" data-lucide="edit" class="lucide lucide-edit stroke-1.5 h-4 w-4"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z">'+
-                            //         '</path></svg></button>'+
-                            //         '<button class="transition duration-200 border shadow-sm inline-flex items-center justify-center rounded-md font-medium cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus-visible:outline-none dark:focus:ring-slate-700 dark:focus:ring-opacity-50 [&amp;:hover:not(:disabled)]:bg-opacity-90 [&amp;:hover:not(:disabled)]:border-opacity-90 [&amp;:not(button)]:text-center disabled:opacity-70 disabled:cursor-not-allowed text-xs py-1.5 px-2 bg-danger border-danger text-white dark:border-danger eliminar mb-2 mr-1 eliminar"'+
-                            //             'data-id="'+row.id+'"'+ 
-                            //             'data-primer_nombre="'+row.primer_nombre+'"'+ 
-                            //             'data-segundo_nombre="'+row.segundo_nombre+'"'+ 
-                            //             'data-primer_apellido="'+row.primer_apellido+'"'+ 
-                            //             'data-segundo_apellido="'+row.segundo_apellido+'"'+ 
-                            //             'data-identidad="'+row.identidad+'"'+
-                            //             'data-telefono="'+row.telefono+'"'+
-                            //             'data-correo_electronico="'+row.correo_electronico+'"'+
-                            //             'data-genero="'+row.id_genero+'"'+
-                            //             'data-departamento="'+row.id_departamento+'"'+
-                            //             'data-municipio="'+row.id_municipio+'"'+
-                            //             'data-domicilio="'+row.domicilio+'"'+
-                            //         '><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" icon-name="trash" data-lucide="trash" class="lucide lucide-trash stroke-1.5 h-4 w-4"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg></button>'
-                            //     ]; 
-                            // }
-                            // if (accion == 1) { 
-                            //     $('#sdatatable').DataTable().row.add(nuevoFila).draw();
-                            // } else if (accion == 2) { 
-                            //     $('#sdatatable').DataTable().row(rowNumber).data(nuevoFila);
-                            // } else if (accion == 3) {
-                            //     $('#sdatatable').DataTable().row(rowNumber).remove().draw();
-                            // }
+                            if(accion != 3){
+                                var row = data.empleados_list;
+                                var objetoUbicacion = JSON.parse(row.ubicacion_casa); 
+                                // var row_ubicacion_casa = JSON.parse(row.ubicacion_casa); 
+                                // row_ubicacion_casa = JSON.stringify(row_ubicacion_casa);
+                                //console.log(objetoUbicacion.lat);
+                                var nuevoFila = [
+                                    row.id, row.primer_nombre+' '+row.segundo_nombre, row.primer_apellido+' '+row.segundo_apellido,
+                                    row.identidad, row.telefono, row.direccion,
+                                    '<button class="transition duration-200 border shadow-sm inline-flex items-center justify-center rounded-md font-medium cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus-visible:outline-none dark:focus:ring-slate-700 dark:focus:ring-opacity-50 [&amp;:hover:not(:disabled)]:bg-opacity-90 [&amp;:hover:not(:disabled)]:border-opacity-90 [&amp;:not(button)]:text-center disabled:opacity-70 disabled:cursor-not-allowed text-xs py-1.5 px-2 bg-warning border-warning text-slate-900 dark:border-warning editar mb-2 mr-1 editar"'+
+                                        'data-id="'+row.id+'"'+  
+                                        'data-primer_nombre="'+row.primer_nombre+'"'+  
+                                        'data-segundo_nombre="'+row.segundo_nombre+'"'+  
+                                        'data-primer_apellido="'+row.primer_apellido+'"'+  
+                                        'data-segundo_apellido="'+row.segundo_apellido+'"'+  
+                                        'data-identidad="'+row.identidad+'"'+ 
+                                        'data-telefono="'+row.telefono+'"'+ 
+                                        'data-poliza_seguro="'+row.poliza_seguro+'"'+ 
+                                        'data-direccion="'+row.direccion+'"'+ 
+                                        'data-seguro_social="'+row.seguro_social+'"'+ 
+                                        'data-rap="'+row.rap+'"'+ 
+                                        'data-declarado_canon="'+row.declarado_canon+'"'+ 
+                                        'data-id_talla_camisa="'+row.id_talla_camisa+'"'+ 
+                                        'data-id_talla_pantalon="'+row.id_talla_pantalon+'"'+ 
+                                        'data-id_tipo_sangre="'+row.id_tipo_sangre+'"'+ 
+                                        'data-nombre_conyugue="'+row.nombre_conyugue+'"'+ 
+                                        'data-ubicacion_casa="'+"{&quot;lat&quot;: "+objetoUbicacion.lat+", &quot;lng&quot;: "+objetoUbicacion.lng+"}"+'"'+ 
+                                    '><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" icon-name="edit" data-lucide="edit" class="lucide lucide-edit stroke-1.5 h-4 w-4"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z">'+
+                                    '</path></svg></button>'+
+                                    '<button class="transition duration-200 border shadow-sm inline-flex items-center justify-center rounded-md font-medium cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus-visible:outline-none dark:focus:ring-slate-700 dark:focus:ring-opacity-50 [&amp;:hover:not(:disabled)]:bg-opacity-90 [&amp;:hover:not(:disabled)]:border-opacity-90 [&amp;:not(button)]:text-center disabled:opacity-70 disabled:cursor-not-allowed text-xs py-1.5 px-2 bg-danger border-danger text-white dark:border-danger eliminar mb-2 mr-1 eliminar"'+
+                                        'data-id="'+row.id+'"'+  
+                                        'data-primer_nombre="'+row.primer_nombre+'"'+  
+                                        'data-segundo_nombre="'+row.segundo_nombre+'"'+  
+                                        'data-primer_apellido="'+row.primer_apellido+'"'+  
+                                        'data-segundo_apellido="'+row.segundo_apellido+'"'+  
+                                        'data-identidad="'+row.identidad+'"'+ 
+                                        'data-telefono="'+row.telefono+'"'+ 
+                                        'data-poliza_seguro="'+row.poliza_seguro+'"'+ 
+                                        'data-direccion="'+row.direccion+'"'+ 
+                                        'data-seguro_social="'+row.seguro_social+'"'+ 
+                                        'data-rap="'+row.rap+'"'+ 
+                                        'data-declarado_canon="'+row.declarado_canon+'"'+ 
+                                        'data-id_talla_camisa="'+row.id_talla_camisa+'"'+ 
+                                        'data-id_talla_pantalon="'+row.id_talla_pantalon+'"'+ 
+                                        'data-id_tipo_sangre="'+row.id_tipo_sangre+'"'+ 
+                                        'data-nombre_conyugue="'+row.nombre_conyugue+'"'+ 
+                                        'data-ubicacion_casa="'+"{&quot;lat&quot;: "+objetoUbicacion.lat+", &quot;lng&quot;: "+objetoUbicacion.lng+"}"+'"'+ 
+                                    '><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" icon-name="trash" data-lucide="trash" class="lucide lucide-trash stroke-1.5 h-4 w-4"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg></button>'
+                                ]; 
+                            }
+                            if (accion == 1) { 
+                                $('#sdatatable').DataTable().row.add(nuevoFila).draw();
+                            } else if (accion == 2) { 
+                                $('#sdatatable').DataTable().row(rowNumber).data(nuevoFila);
+                            } else if (accion == 3) {
+                                $('#sdatatable').DataTable().row(rowNumber).remove().draw();
+                            }
                             
                         }
                         notificacion(); 
                         accion_guardar = false;
-                        // const el = document.querySelector("#modal_nuevo_empleado");
-                        // const modal = tailwind.Modal.getOrCreateInstance(el);
-                        // modal.hide();
-                    },
-                });
-            }
-
-            function consultar_municipios(id_departamento) {
-                // if (onTomSelect) {
-                //     tomSelect.disable();
-                // }
-                $.ajax({
-                    type: "POST",
-                    url: url_consultar_municipios,
-                    data: {
-                        'id_departamento': id_departamento
-                    },
-                    success: function(data) {
-                        var municipios = data.departamento_municipios;
-                        
-                        // if (onTomSelect) {
-                        //     tomSelect.destroy();
-                        //     onTomSelect = false;
-                        // }
-
-                        $('#modal_select_talla_camisa').html('');
-
-                        for (let i = 0; i < municipios.length; i++) {
-                            $('#modal_select_talla_camisa').append('<option value="'+municipios[i].id_municipio+'">'+municipios[i].nombre+'</option>');
-                        }
-                        $('#modal_select_talla_camisa').prop('disabled', false);
-                        if(accion == 2){
-                            datos_inputs();
-                        }
-                        // var $select = $('#modal_select_talla_camisa');
-                        // if(!onTomSelect){
-                        //     tomSelect = new TomSelect($select.get(0), {
-                        //         placeholder: 'Selecciona un Municipio'
-                        //     }); 
-                        //     tomSelect.enable();
-                        //     onTomSelect = true;
-                        // }
-                        // tomSelect.wrapper.classList.add('x-base', 'tom-select');
-                        
+                        const el = document.querySelector("#modal_nuevo_empleado");
+                        const modal = tailwind.Modal.getOrCreateInstance(el);
+                        modal.hide();
                     },
                 });
             }

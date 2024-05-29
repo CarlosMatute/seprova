@@ -155,14 +155,54 @@ class EmpleadosController extends Controller
                 $msgSuccess = "Empleado '".$empleado->id."' Guardado Exitosamente.";
                 $id = $empleado->id;
             }else if ($accion == 2) {
-                DB::select("UPDATE administracion.via_zonas set
-                     nombre=:nombre, descripcion=:descripcion, update_at=now()
-                    WHERE id = :id;",
-                    ["id" => $id, "nombre" => $nombre, "descripcion" => $descripcion]);
+                //throw new exception($ubicacion_casa, true);
+                DB::select("UPDATE PUBLIC.EMPLEADOS
+                        SET
+                            PRIMER_NOMBRE = :primer_nombre,
+                            SEGUNDO_NOMBRE = :segundo_nombre,
+                            PRIMER_APELLIDO = :primer_apellido,
+                            SEGUNDO_APELLIDO = :segundo_apellido,
+                            IDENTIDAD = :identidad,
+                            TELEFONO = :telefono,
+                            DIRECCION = :domicilio,
+                            POLIZA_SEGURO = :numero_poliza,
+                            SEGURO_SOCIAL = :check_seguro_social,
+                            RAP = :check_rap,
+                            FOTO = NULL,
+                            DECLARADO_CANON = :check_canon,
+                            ID_TALLA_CAMISA = :talla_camisa,
+                            ID_TALLA_PANTALON = :talla_pantalon,
+                            ID_TIPO_SANGRE = :tipo_sangre,
+                            NOMBRE_CONYUGUE = :nombre_conyugue,
+                            UBICACION_CASA = :ubicacion_casa,
+                            UPDATED_AT = NOW()
+                        WHERE
+                            ID = :id;",
+                    ["id" => $id,
+                    "primer_nombre" => $primer_nombre,
+                    "segundo_nombre" => $segundo_nombre,
+                    "primer_apellido" => $primer_apellido,
+                    "segundo_apellido" => $segundo_apellido,
+                    "telefono" => $telefono,
+                    "identidad" => $identidad,
+                    "numero_poliza" => $numero_poliza,
+                    "tipo_sangre" => $tipo_sangre,
+                    "talla_camisa" => $talla_camisa,
+                    "talla_pantalon" => $talla_pantalon,
+                    "check_seguro_social" => $check_seguro_social,
+                    "check_rap" => $check_rap,
+                    "check_canon" => $check_canon,
+                    "nombre_conyugue" => $nombre_conyugue,
+                    "domicilio" => $domicilio,
+                    "ubicacion_casa" => $ubicacion_casa]);
                 $estatus = true;
                 $msgSuccess = "Empleado " . $id . " Actualizado Exitosamente.";
             }else if ($accion == 3) {
-                DB::select("UPDATE administracion.via_zonas set deleted_at=now() WHERE id = :id;", ["id" => $id]);
+                DB::select("UPDATE PUBLIC.EMPLEADOS
+                        SET
+                            DELETED_AT = NOW()
+                        WHERE
+                            ID =:id;", ["id" => $id]);
                 $estatus = true;
                 $msgSuccess = "Empleado " . $id . " Eliminado Exitosamente.";
             }else{
