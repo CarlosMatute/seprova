@@ -58,6 +58,7 @@
             <thead>
                 <tr class="bg-dark text-white">
                     <th>ID</th>
+                    <th>Foto</th>
                     <th>Nombres</th>
                     <th>Apellidos</th>
                     <th>Identidad</th>
@@ -70,6 +71,14 @@
                 @foreach($empleados as $row)
                     <tr>
                         <td>{{$row->id}}</td>
+                    <td><div class="image-fit h-12 w-12 flex-none">
+                                    <img
+                                        class="rounded-full"
+                                        src="{{ asset('img/empleados/')}}/{{ $row->foto }}" onerror="this.src='{{ asset('img/user2.png') }}'"
+                                        alt="Midone Tailwind HTML Admin Template"
+                                    />
+                                </div>
+                                </td>
                         <td>{{$row->primer_nombre}} {{$row->segundo_nombre}}</td>
                         <td>{{$row->primer_apellido}} {{$row->segundo_apellido}}</td>
                         <td>{{$row->identidad}}</td>
@@ -435,7 +444,7 @@
                     }).addTo(map);
 
                      // Establece la ruta de las imágenes de Leaflet
-                    L.Icon.Default.imagePath = "/build/assets/";
+                    L.Icon.Default.imagePath = "/img/";
 
 
                     // Añade un evento de clic al mapa

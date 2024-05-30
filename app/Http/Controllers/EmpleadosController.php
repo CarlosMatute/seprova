@@ -274,7 +274,10 @@ class EmpleadosController extends Controller
                         E.IDENTIDAD,
                         E.TELEFONO,
                         E.DIRECCION,
-                        E.POLIZA_SEGURO,
+                        CASE
+                            WHEN E.POLIZA_SEGURO is not null THEN E.POLIZA_SEGURO::TEXT
+                            ELSE 'No Aplica'
+                        END POLIZA_SEGURO,
                         E.SEGURO_SOCIAL,
                         CASE
                             WHEN E.SEGURO_SOCIAL = 1 THEN 'Inscrito'
@@ -321,21 +324,22 @@ class EmpleadosController extends Controller
             // $nombre = "examen_".time().".".$file->guessExtension();
             $nombre_archivo = "foto_empleado_".$id_empleado.".".$file->guessExtension();
 
-            $ruta = public_path("build\assets\img_empleados\\".$nombre_archivo);
+            $ruta = public_path("img\\empleados\\".$nombre_archivo);
             //$ruta = $request->file('profile_picture')->store('build/assets/img_empleados', 'public');
             //$ruta = "/home/shfnuaro/public_html/pdf/examenes_laboratorio/".$nombre_archivo;
 
-            //if($file->guessExtension()=="pdf"){
+            // if($file->guessExtension()=="jpeg"){
             copy($file, $ruta);
                         
-            //     DB::select("
-            //     INSERT INTO public.tbl_laboratorio(
-            //         id_paciente, id_expediente, id_remision, examen_laboratorio, url_pdf, created_at)
-            //         VALUES (:id_paciente, :id_expediente, :id_remision, :examen_laboratorio, :nombre_archivo, (now() at time zone 'CST'));
-            //     ", ["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision, 
-            //     "examen_laboratorio" =>  $descripcion_examen, "nombre_archivo" =>  $nombre_archivo]);
+                DB::select("UPDATE PUBLIC.EMPLEADOS
+                    SET
+                        FOTO = :nombre_archivo,
+                        UPDATED_AT = NOW()
+                    WHERE
+                        ID = :id_empleado;
+                ", ["id_empleado" => $id_empleado, "nombre_archivo" => $nombre_archivo]);
             // }else{
-            //     dd("NO ES UN PDF");
+            //     dd("NO ES UNA IMAGEN");
             // }
 
         }
