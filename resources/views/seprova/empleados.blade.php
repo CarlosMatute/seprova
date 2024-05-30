@@ -130,6 +130,18 @@
                                     icon="Trash"
                                 />
                             </x-base.button>
+                            <x-base.button
+                                href="{{url('/empleados/')}}/{{$row->id}}/expediente"
+                                as="a"
+                                class="mb-2 mr-1"
+                                variant="primary"
+                                size="sm"
+                            >
+                                <x-base.lucide
+                                    class="h-4 w-4"
+                                    icon="FileText"
+                                />
+                            </x-base.button>
                         </td>
                     </tr>
                 @endforeach
@@ -456,6 +468,7 @@
                                      }); 
 
             $('#sdatatable tbody').on('click', '.editar', function() {
+                map.setView([15.199999, -86.241905], 6);
                 accion = 2;
                 id = $(this).data('id');
                 primer_nombre = $(this).data('primer_nombre');
@@ -529,6 +542,7 @@
             });
 
             $("#btn_nuevo_empleado").on("click", function (event) {
+                map.setView([15.199999, -86.241905], 6);
                 if (marker) {
                     map.removeLayer(marker);
                     marker = null;

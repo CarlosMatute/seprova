@@ -7,6 +7,8 @@ use Illuminate\View\View;
 use DB;
 use Session;
 use Exception;
+use File;
+use Illuminate\Support\Facades\Storage;
 
 class EmpleadosController extends Controller
 {
@@ -259,5 +261,84 @@ class EmpleadosController extends Controller
             $msgError = $e->getMessage();
         }
         return response()->json(["estatus"=>$estatus,"msgSuccess"=>$msgSuccess,"msgError"=>$msgError, "empleados_list"=>$empleados_list]);
+    }
+
+    public function expediente_empleados($id_empleado){
+
+        $empleado = collect(\DB::select("SELECT
+                        E.ID,
+                        E.PRIMER_NOMBRE,
+                        E.SEGUNDO_NOMBRE,
+                        E.PRIMER_APELLIDO,
+                        E.SEGUNDO_APELLIDO,
+                        E.IDENTIDAD,
+                        E.TELEFONO,
+                        E.DIRECCION,
+                        E.POLIZA_SEGURO,
+                        E.SEGURO_SOCIAL,
+                        CASE
+                            WHEN E.SEGURO_SOCIAL = 1 THEN 'Inscrito'
+                            ELSE 'No Inscrito'
+                        END SEGURO_SOCIAL_INSCRIPCION,
+                        E.RAP,
+                        CASE
+                            WHEN E.RAP = 1 THEN 'Inscrito'
+                            ELSE 'No Inscrito'
+                        END RAP_INSCRIPCION,
+                        E.FOTO,
+                        E.DECLARADO_CANON,
+                        CASE
+                            WHEN E.DECLARADO_CANON = 1 THEN 'Declarado'
+                            ELSE 'No Declarado'
+                        END DECLARADO_CANON_DECLARACION,
+                        E.ID_TALLA_CAMISA,
+                        TC.NOMBRE TALLA_CAMISA,
+                        E.ID_TALLA_PANTALON,
+                        TP.NOMBRE TALLA_PANTALON,
+                        E.ID_TIPO_SANGRE,
+                        TS.NOMBRE TIPO_SANGRE,
+                        E.NOMBRE_CONYUGUE,
+                        E.UBICACION_CASA,
+                        E.CREATED_AT
+                    FROM
+                        PUBLIC.EMPLEADOS E
+                        JOIN TALLAS_CAMISAS TC ON E.ID_TALLA_CAMISA = TC.ID
+                        JOIN TALLAS_PANTALONES TP ON E.ID_TALLA_PANTALON = TP.ID
+                        JOIN TIPOS_SANGRE TS ON E.ID_TIPO_SANGRE = TS.ID
+                    WHERE
+                        E.DELETED_AT IS NULL
+                        AND E.ID = :id;", ["id" => $id_empleado]))->first();
+        return view('seprova.empleadosExpedientes')
+                    ->with("empleado", $empleado);
+        
+    }
+
+    public function guardar_fotos_empleados(Request $request){
+        $id_empleado = $request->id_empleado;
+        if($request->hasFile("profile_picture")){
+            $file=$request->file("profile_picture");
+            
+            // $nombre = "examen_".time().".".$file->guessExtension();
+            $nombre_archivo = "foto_empleado_".$id_empleado.".".$file->guessExtension();
+
+            $ruta = public_path("build\assets\img_empleados\\".$nombre_archivo);
+            //$ruta = $request->file('profile_picture')->store('build/assets/img_empleados', 'public');
+            //$ruta = "/home/shfnuaro/public_html/pdf/examenes_laboratorio/".$nombre_archivo;
+
+            //if($file->guessExtension()=="pdf"){
+            copy($file, $ruta);
+                        
+            //     DB::select("
+            //     INSERT INTO public.tbl_laboratorio(
+            //         id_paciente, id_expediente, id_remision, examen_laboratorio, url_pdf, created_at)
+            //         VALUES (:id_paciente, :id_expediente, :id_remision, :examen_laboratorio, :nombre_archivo, (now() at time zone 'CST'));
+            //     ", ["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision, 
+            //     "examen_laboratorio" =>  $descripcion_examen, "nombre_archivo" =>  $nombre_archivo]);
+            // }else{
+            //     dd("NO ES UN PDF");
+            // }
+
+        }
+        return redirect()->back();
     }
 }

@@ -106,6 +106,8 @@ Route::middleware('auth')->group(function () {
     //Inicia SEPROVA
         Route::get('/empleados', [EmpleadosController::class, 'ver_empleados'])->name('empleados');
         Route::post('/empleados/guardar', [EmpleadosController::class, 'guardar_empleados']);
+        Route::get('/empleados/{id_empleado}/expediente', [EmpleadosController::class, 'expediente_empleados']);
+        Route::post('/empleados/foto/guardar', [EmpleadosController::class, 'guardar_fotos_empleados']);
         Route::get('/clientes', [ClientesController::class, 'ver_clientes'])->name('clientes');
         Route::post('/clientes/guardar', [ClientesController::class, 'guardar_clientes']);
         Route::get('/ubicaciones', [UbicacionesController::class, 'ver_ubicaciones'])->name('ubicaciones');
