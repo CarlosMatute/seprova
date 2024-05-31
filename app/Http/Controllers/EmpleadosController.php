@@ -9,6 +9,7 @@ use Session;
 use Exception;
 use File;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Redirect;
 
 class EmpleadosController extends Controller
 {
@@ -341,6 +342,10 @@ class EmpleadosController extends Controller
             // }
 
         }
-        return redirect()->back();
+        return Redirect::back()->withHeaders([
+            'Cache-Control' => 'no-cache, no-store, must-revalidate',
+            'Pragma' => 'no-cache',
+            'Expires' => '0',
+        ]);
     }
 }
