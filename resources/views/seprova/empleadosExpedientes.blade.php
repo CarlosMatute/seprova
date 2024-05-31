@@ -211,7 +211,7 @@
                 <x-base.button class="mr-1 w-24" data-tw-dismiss="modal" type="button" variant="danger">
                     Cancelar
                 </x-base.button>
-                <x-base.button class="w-24" type="submit" variant="primary" id="btn_eliminar">
+                <x-base.button class="w-24" type="submit" variant="primary">
                     Cargar
                 </x-base.button>
             </form>
@@ -529,33 +529,6 @@
                     guardar_empleados();
                 }
             });
-
-            $("#btn_eliminar").on("click", function () {
-                guardar_empleados();
-                const el = document.querySelector("#modal_eliminar");
-                const modal = tailwind.Modal.getOrCreateInstance(el);
-                modal.hide();
-            });
-
-//             $('#uploadForm').submit(function(e) {
-//                 e.preventDefault();
-//                 var formData = new FormData(this);
-// console.log('J')
-//                 // $.ajax({
-//                 //     type: 'POST',
-//                 //     url: $(this).attr('action'),
-//                 //     data: formData,
-//                 //     contentType: false,
-//                 //     processData: false,
-//                 //     success: function(response) {
-//                 //         alert('Profile picture uploaded successfully!');
-//                 //         $('#profileModal').addClass('hidden');
-//                 //     },
-//                 //     error: function(response) {
-//                 //         alert('An error occurred while uploading the picture.');
-//                 //     }
-//                 // });
-//             });
 
             function guardar_empleados() {
                 accion_guardar = true;

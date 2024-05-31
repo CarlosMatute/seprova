@@ -124,7 +124,6 @@ class EmpleadosController extends Controller
                                 POLIZA_SEGURO,
                                 SEGURO_SOCIAL,
                                 RAP,
-                                FOTO,
                                 DECLARADO_CANON,
                                 ID_TALLA_CAMISA,
                                 ID_TALLA_PANTALON,
@@ -134,7 +133,7 @@ class EmpleadosController extends Controller
                             )
                         VALUES
                             (:primer_nombre, :segundo_nombre, :primer_apellido, :segundo_apellido, :identidad, 
-                            :telefono, :domicilio, :numero_poliza, :check_seguro_social, :check_rap, null, :check_canon, 
+                            :telefono, :domicilio, :numero_poliza, :check_seguro_social, :check_rap, :check_canon, 
                             :talla_camisa, :talla_pantalon, :tipo_sangre, :nombre_conyugue, :ubicacion_casa)
                     returning id;",
                     ["primer_nombre" => $primer_nombre,
@@ -170,7 +169,6 @@ class EmpleadosController extends Controller
                             POLIZA_SEGURO = :numero_poliza,
                             SEGURO_SOCIAL = :check_seguro_social,
                             RAP = :check_rap,
-                            FOTO = NULL,
                             DECLARADO_CANON = :check_canon,
                             ID_TALLA_CAMISA = :talla_camisa,
                             ID_TALLA_PANTALON = :talla_pantalon,
@@ -260,7 +258,7 @@ class EmpleadosController extends Controller
             $estatus = false;
             $msgError = $e->getMessage();
         }
-        return response()->json(["estatus"=>$estatus,"msgSuccess"=>$msgSuccess,"msgError"=>$msgError, "empleados_list"=>$empleados_list]);
+        return response()->json(["msgSuccess"=>$msgSuccess,"msgError"=>$msgError, "empleados_list"=>$empleados_list]);
     }
 
     public function expediente_empleados($id_empleado){
