@@ -6,6 +6,7 @@ use App\Http\Controllers\PageController;
 use App\Http\Controllers\DarkModeController;
 use App\Http\Controllers\ColorSchemeController;
 use App\Http\Controllers\EmpleadosController;
+use App\Http\Controllers\ContratosController;
 
 /*
 |--------------------------------------------------------------------------
@@ -108,6 +109,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/empleados/guardar', [EmpleadosController::class, 'guardar_empleados']);
         Route::get('/empleados/{id_empleado}/expediente', [EmpleadosController::class, 'expediente_empleados']);
         Route::post('/empleados/foto/guardar', [EmpleadosController::class, 'guardar_fotos_empleados']);
+        Route::get('/contratos', [ContratosController::class, 'ver_contratos'])->name('contratos');
         Route::get('/clientes', [ClientesController::class, 'ver_clientes'])->name('clientes');
         Route::post('/clientes/guardar', [ClientesController::class, 'guardar_clientes']);
         Route::get('/ubicaciones', [UbicacionesController::class, 'ver_ubicaciones'])->name('ubicaciones');
