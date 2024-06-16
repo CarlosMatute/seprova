@@ -110,6 +110,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/empleados/{id_empleado}/expediente', [EmpleadosController::class, 'expediente_empleados']);
         Route::post('/empleados/foto/guardar', [EmpleadosController::class, 'guardar_fotos_empleados']);
         Route::get('/contratos', [ContratosController::class, 'ver_contratos'])->name('contratos');
+        Route::post('/contratos/guardar', [ContratosController::class, 'guardar_contratos']);
         Route::get('/clientes', [ClientesController::class, 'ver_clientes'])->name('clientes');
         Route::post('/clientes/guardar', [ClientesController::class, 'guardar_clientes']);
         Route::get('/ubicaciones', [UbicacionesController::class, 'ver_ubicaciones'])->name('ubicaciones');
