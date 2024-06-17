@@ -104,6 +104,8 @@
                                 data-id_talla_camisa="{{$row->id_talla_camisa}}"
                                 data-id_talla_pantalon="{{$row->id_talla_pantalon}}"
                                 data-id_tipo_sangre="{{$row->id_tipo_sangre}}"
+                                data-id_estado_civil="{{$row->id_estado_civil}}"
+                                data-estado_civil="{{$row->estado_civil}}"
                                 data-nombre_conyugue="{{$row->nombre_conyugue}}"
                                 data-ubicacion_casa="{{$row->ubicacion_casa}}"
                             >
@@ -131,6 +133,8 @@
                                 data-id_talla_camisa="{{$row->id_talla_camisa}}"
                                 data-id_talla_pantalon="{{$row->id_talla_pantalon}}"
                                 data-id_tipo_sangre="{{$row->id_tipo_sangre}}"
+                                data-id_estado_civil="{{$row->id_estado_civil}}"
+                                data-estado_civil="{{$row->estado_civil}}"
                                 data-nombre_conyugue="{{$row->nombre_conyugue}}"
                                 data-ubicacion_casa="{{$row->ubicacion_casa}}"
                             >
@@ -161,7 +165,7 @@
 <!-- END: HTML Table Data -->
 
 <!-- BEGIN: Modal Content -->
-<x-base.dialog id="modal_nuevo_empleado" size="xl">
+<x-base.dialog id="modal_nuevo_empleado" size="xl" staticBackdrop>
     <x-base.dialog.panel>
         <x-base.dialog.title class="bg-primary">
             <h2 class="mr-auto text-white font-medium">
@@ -170,6 +174,16 @@
                     <span class="text-white-700"> Registrar Nuevo Empleado</span>
                 </div>
             </h2>
+            <a
+                                    class="absolute top-0 right-0 mt-3 mr-3"
+                                    data-tw-dismiss="modal"
+                                    href="#"
+                                >
+                                    <x-base.lucide
+                                        class="h-4 w-4 text-slate-400"
+                                        icon="X"
+                                    />
+                                </a>
         </x-base.dialog.title>
         <x-base.dialog.description class="grid grid-cols-12 gap-4 gap-y-3">
             <div class="col-span-12 md:col-span-12 lg:col-span-6">
@@ -291,7 +305,17 @@
                                 </x-base.form-check>
                             </div>
             </div>
-            <div class="col-span-12 md:col-span-12 lg:col-span-12">
+            <div class="col-span-12 md:col-span-12 lg:col-span-4">
+                <x-base.form-label class="font-extrabold" for="modal_select_estado_civil">
+                    Estado Civil
+                </x-base.form-label>
+                <x-base.form-select id="modal_select_estado_civil" class="w-full">
+                    @foreach($estado_civil as $row)
+                        <option value="{{$row->id}}">{{$row->nombre}}</option>
+                    @endforeach
+                </x-base.form-select>
+            </div>
+            <div class="col-span-12 md:col-span-12 lg:col-span-8">
                 <x-base.form-label class="font-extrabold" for="modal_input_nombre_conyugue">
                     Nombre Completo del Conyugue
                 </x-base.form-label>
@@ -304,6 +328,33 @@
                 <x-base.form-textarea rows="5" id="modal_input_domicilio" placeholder="Escriba la dirección exacta."></x-base.form-textarea>
                 <div id="map"></div>
                 <!-- <p>Coordenadas: <span id="coords">N/A</span></p> -->
+            </div>
+            <hr>
+            <div class="col-span-12 md:col-span-12 lg:col-span-12">
+                <x-base.form-label class="font-extrabold" for="modal_select_contrato">
+                    Contrato Actual
+                </x-base.form-label>
+                <x-base.tom-select
+                                    class="w-full"
+                                    data-placeholder="Elija un contrato"
+                                    id="modal_select_contrato"
+                                >
+                                @foreach($contratos as $row)
+                                    <option data-valueId="{{$row->id}}" data-valueMeses="{{$row->meses}}">{{$row->contrato}}</option>
+                                @endforeach
+                                </x-base.tom-select>
+            </div>
+            <div class="col-span-12 md:col-span-12 lg:col-span-6">
+                <x-base.form-label class="font-extrabold" for="modal_fecha_inicio_contrato">
+                    Fecha de Inicio
+                </x-base.form-label>
+                <x-base.form-input id="modal_fecha_inicio_contrato" type="date"/>
+            </div>
+            <div class="col-span-12 md:col-span-12 lg:col-span-6">
+                <x-base.form-label class="font-extrabold" for="modal_fecha_finalizacion_contrato">
+                    Fecha de Finalización
+                </x-base.form-label>
+                <x-base.form-input id="modal_fecha_finalizacion_contrato" type="date"/>
             </div>
         </x-base.dialog.description>
         <x-base.dialog.footer class="bg-dark">
@@ -379,11 +430,14 @@
             var check_seguro_social = null;
             var check_rap = null;
             var check_canon = null;
+            var estado_civil = null;
             var nombre_conyugue = null;
             var domicilio = null;
             var ubicacion_casa = null;
             var map = null;
             var marker = null;
+            var id_contrato = null;
+            var contrato_meses = null;
             var url_guardar_empleado = "{{url('/empleados/guardar')}}";
             var onTomSelect = false;
             var tomSelect = null;
@@ -515,6 +569,13 @@
                 }else{
                     $('#modal_checkbox_canon').prop('checked', false);
                 }
+                estado_civil = $(this).data('id_estado_civil');
+                if (estado_civil == 2) {
+                    $('#modal_input_nombre_conyugue').prop('disabled', false);
+                } else {
+                    $('#modal_input_nombre_conyugue').prop('disabled', true);
+                    $("#modal_input_nombre_conyugue").val('');
+                }
                 nombre_conyugue = $(this).data('nombre_conyugue');
                 domicilio = $(this).data('direccion');
                 ubicacion_casa = $(this).data('ubicacion_casa');
@@ -528,6 +589,7 @@
                 $("#modal_select_tipo_sangre").val(tipo_sangre);
                 $("#modal_select_talla_camisa").val(talla_camisa);
                 $("#modal_select_talla_pantalon").val(talla_pantalon);
+                $("#modal_select_estado_civil").val(estado_civil);
                 $("#modal_input_nombre_conyugue").val(nombre_conyugue);
                 $("#modal_input_domicilio").val(domicilio);
                 //console.log(ubicacion_casa);
@@ -571,8 +633,12 @@
                 $('#modal_checkbox_seguro_social').prop('checked', false);
                 $('#modal_checkbox_rap').prop('checked', false);
                 $('#modal_checkbox_canon').prop('checked', false);
+                $("#modal_select_estado_civil").val('');
+                $('#modal_input_nombre_conyugue').prop('disabled', true);
                 $("#modal_input_nombre_conyugue").val('');
                 $("#modal_input_domicilio").val('');
+                $('#modal_fecha_inicio_contrato').prop('disabled', true);
+                $('#modal_fecha_finalizacion_contrato').prop('disabled', true);
                 
                 accion = 1;
                 const el = document.querySelector("#modal_nuevo_empleado");
@@ -589,6 +655,28 @@
                 }
             });
 
+            $('#modal_select_estado_civil').change(function(){
+                estado_civil = $("#modal_select_estado_civil").val();
+                if (estado_civil == 2) {
+                    $('#modal_input_nombre_conyugue').prop('disabled', false);
+                } else {
+                    $('#modal_input_nombre_conyugue').prop('disabled', true);
+                    $("#modal_input_nombre_conyugue").val('');
+                }
+            });
+
+            $('#modal_select_contrato').change(function(){
+                $('#modal_fecha_inicio_contrato').prop('disabled', false);
+                const selectedOption = this.options[this.selectedIndex];
+                id_contrato = selectedOption.getAttribute('data-valueId');
+                contrato_meses = selectedOption.getAttribute('data-valueMeses');
+                calcular_meses();
+            });
+
+            $('#modal_fecha_inicio_contrato').change(function(){
+                calcular_meses();
+            })
+
             $("#modal_btn_guardar_empleados").on("click", function () {
                 primer_nombre = $("#modal_input_primer_nombre").val();
                 segundo_nombre = $("#modal_input_segundo_nombre").val();
@@ -604,6 +692,7 @@
                 check_seguro_social = $("#modal_checkbox_seguro_social").prop('checked');
                 check_rap = $("#modal_checkbox_rap").prop('checked');
                 check_canon = $("#modal_checkbox_canon").prop('checked');
+                estado_civil = $("#modal_select_estado_civil").val();
                 nombre_conyugue = $("#modal_input_nombre_conyugue").val();
                 domicilio = $("#modal_input_domicilio").val();
 
@@ -651,12 +740,14 @@
                     }
                 }
 
-                if(nombre_conyugue == null || nombre_conyugue == ''){
-                    titleMsg = 'Valor Requerido'
-                    textMsg = 'Debe especificar un valor para Nombre Conyugue.';
-                    typeMsg = 'error';
-                    notificacion()
-                    return false;
+                if (estado_civil == 2) {
+                    if(nombre_conyugue == null || nombre_conyugue == ''){
+                        titleMsg = 'Valor Requerido'
+                        textMsg = 'Debe especificar un valor para Nombre Conyugue.';
+                        typeMsg = 'error';
+                        notificacion()
+                        return false;
+                    }
                 }
 
                 if(domicilio == null || domicilio == ''){
@@ -687,6 +778,42 @@
                 modal.hide();
             });
 
+            function calcular_meses(){
+                var today = null;
+                var fecha_inicio_contrato = $("#modal_fecha_inicio_contrato").val();
+                if (fecha_inicio_contrato == null || fecha_inicio_contrato == ''){
+                    today = new Date();
+                    console.log(today);
+                }else{
+                    today = new Date(fecha_inicio_contrato);
+                    today.setDate(today.getDate() + 1);
+                    console.log(today);
+                }
+                const year = today.getFullYear();
+                const month = today.getMonth()
+                const monthFormath = String(today.getMonth() + 1).padStart(2, '0');
+                const day = String(today.getDate()).padStart(2, '0'); // Añade ceros a la izquierda si es necesario
+
+                const todayString = `${year}-${monthFormath}-${day}`;
+                $("#modal_fecha_inicio_contrato").val(todayString);
+
+                    if (contrato_meses != 0) {
+                        $('#modal_fecha_finalizacion_contrato').prop('disabled', false);
+                        today.setMonth(today.getMonth() + parseInt(contrato_meses));
+                        // if (today.getMonth() === 0) {
+                        //     today.setFullYear(today.getFullYear() + 1);
+                        // }
+                        const anio = today.getFullYear();
+                        const mes = String(today.getMonth() + 1).padStart(2, '0');
+                        const dia = String(today.getDate()).padStart(2, '0');
+                        const nextMonthString = `${anio}-${mes}-${dia}`;
+                        $("#modal_fecha_finalizacion_contrato").val(nextMonthString);
+                    } else {
+                        $('#modal_fecha_finalizacion_contrato').prop('disabled', true);
+                        $("#modal_fecha_finalizacion_contrato").val('');
+                    }
+            }
+
             function guardar_empleados() {
                 accion_guardar = true;
                 $.ajax({
@@ -709,6 +836,7 @@
                         'check_seguro_social' : check_seguro_social,
                         'check_rap' : check_rap,
                         'check_canon' : check_canon,
+                        'estado_civil' : estado_civil,
                         'nombre_conyugue' : nombre_conyugue,
                         'domicilio' : domicilio,
                         'ubicacion_casa' : ubicacion_casa
@@ -746,6 +874,8 @@
                                         'data-id_talla_camisa="'+row.id_talla_camisa+'"'+ 
                                         'data-id_talla_pantalon="'+row.id_talla_pantalon+'"'+ 
                                         'data-id_tipo_sangre="'+row.id_tipo_sangre+'"'+ 
+                                        'data-id_estado_civil="'+row.id_estado_civil+'"'+ 
+                                        'data-estado_civil="'+row.estado_civil+'"'+ 
                                         'data-nombre_conyugue="'+row.nombre_conyugue+'"'+ 
                                         'data-ubicacion_casa="'+"{&quot;lat&quot;: "+objetoUbicacion.lat+", &quot;lng&quot;: "+objetoUbicacion.lng+"}"+'"'+ 
                                     '><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" icon-name="edit" data-lucide="edit" class="lucide lucide-edit stroke-1.5 h-4 w-4"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z">'+
@@ -766,6 +896,8 @@
                                         'data-id_talla_camisa="'+row.id_talla_camisa+'"'+ 
                                         'data-id_talla_pantalon="'+row.id_talla_pantalon+'"'+ 
                                         'data-id_tipo_sangre="'+row.id_tipo_sangre+'"'+ 
+                                        'data-id_estado_civil="'+row.id_estado_civil+'"'+ 
+                                        'data-estado_civil="'+row.estado_civil+'"'+ 
                                         'data-nombre_conyugue="'+row.nombre_conyugue+'"'+ 
                                         'data-ubicacion_casa="'+"{&quot;lat&quot;: "+objetoUbicacion.lat+", &quot;lng&quot;: "+objetoUbicacion.lng+"}"+'"'+ 
                                     '><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" icon-name="trash" data-lucide="trash" class="lucide lucide-trash stroke-1.5 h-4 w-4"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg></button>'+

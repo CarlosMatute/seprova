@@ -15,38 +15,50 @@ class EmpleadosController extends Controller
 {
     public function ver_empleados(){
         $empleados = DB::select("SELECT
-                E.ID,
-                E.PRIMER_NOMBRE,
-                E.SEGUNDO_NOMBRE,
-                E.PRIMER_APELLIDO,
-                E.SEGUNDO_APELLIDO,
-                E.IDENTIDAD,
-                E.TELEFONO,
-                E.DIRECCION,
-                E.POLIZA_SEGURO,
-                E.SEGURO_SOCIAL,
-                case when E.SEGURO_SOCIAL = 1 then 'Inscrito' else 'No Inscrito' end SEGURO_SOCIAL_inscripcion,
-                E.RAP,
-                case when E.RAP = 1 then 'Inscrito' else 'No Inscrito' end RAP_inscripcion,
-                E.FOTO,
-                E.DECLARADO_CANON,
-                case when E.DECLARADO_CANON = 1 then 'Declarado' else 'No Declarado' end DECLARADO_CANON_declaracion,
-                E.ID_TALLA_CAMISA,
-                tc.nombre talla_camisa,
-                E.ID_TALLA_PANTALON,
-                tp.nombre talla_pantalon,
-                E.ID_TIPO_SANGRE,
-                ts.nombre tipo_sangre,
-                E.NOMBRE_CONYUGUE,
-                E.UBICACION_CASA,
-                E.CREATED_AT
-            FROM
-                PUBLIC.EMPLEADOS E
-                join TALLAS_CAMISAS tc on e.ID_TALLA_CAMISA = tc.id
-                join TALLAS_PANTALONES tp on e.ID_TALLA_PANTALON = tp.id
-                join TIPOS_SANGRE ts on e.ID_TIPO_SANGRE = ts.id
-            WHERE
-                E.DELETED_AT IS NULL;");
+                    E.ID,
+                    E.PRIMER_NOMBRE,
+                    E.SEGUNDO_NOMBRE,
+                    E.PRIMER_APELLIDO,
+                    E.SEGUNDO_APELLIDO,
+                    E.IDENTIDAD,
+                    E.TELEFONO,
+                    E.DIRECCION,
+                    E.POLIZA_SEGURO,
+                    E.SEGURO_SOCIAL,
+                    CASE
+                        WHEN E.SEGURO_SOCIAL = 1 THEN 'Inscrito'
+                        ELSE 'No Inscrito'
+                    END SEGURO_SOCIAL_INSCRIPCION,
+                    E.RAP,
+                    CASE
+                        WHEN E.RAP = 1 THEN 'Inscrito'
+                        ELSE 'No Inscrito'
+                    END RAP_INSCRIPCION,
+                    E.FOTO,
+                    E.DECLARADO_CANON,
+                    CASE
+                        WHEN E.DECLARADO_CANON = 1 THEN 'Declarado'
+                        ELSE 'No Declarado'
+                    END DECLARADO_CANON_DECLARACION,
+                    E.ID_TALLA_CAMISA,
+                    TC.NOMBRE TALLA_CAMISA,
+                    E.ID_TALLA_PANTALON,
+                    TP.NOMBRE TALLA_PANTALON,
+                    E.ID_TIPO_SANGRE,
+                    TS.NOMBRE TIPO_SANGRE,
+                    EC.ID ID_ESTADO_CIVIL,
+                    EC.NOMBRE ESTADO_CIVIL,
+                    E.NOMBRE_CONYUGUE,
+                    E.UBICACION_CASA,
+                    E.CREATED_AT
+                FROM
+                    PUBLIC.EMPLEADOS E
+                    JOIN TALLAS_CAMISAS TC ON E.ID_TALLA_CAMISA = TC.ID
+                    JOIN TALLAS_PANTALONES TP ON E.ID_TALLA_PANTALON = TP.ID
+                    JOIN TIPOS_SANGRE TS ON E.ID_TIPO_SANGRE = TS.ID
+                    LEFT JOIN ESTADO_CIVIL EC ON E.ID_ESTADO_CIVIL = EC.ID
+                WHERE
+                    E.DELETED_AT IS NULL;");
 
         $tallas_camisas = DB::select("SELECT
                 ID,
@@ -74,11 +86,44 @@ class EmpleadosController extends Controller
             ORDER BY
                 NOMBRE");
 
+        $estado_civil = DB::select("SELECT
+                ID,
+                NOMBRE
+            FROM
+                ESTADO_CIVIL
+            WHERE
+                DELETED_AT IS NULL
+            ORDER BY
+                NOMBRE");
+
+        $contratos = DB::select("SELECT
+                CC.ID,
+                CASE
+                    WHEN TP.NOMBRE = 'Indefinido' THEN 0
+                    ELSE TP.NOMBRE::NUMERIC
+                END MESES,
+                CC.NOMBRE || ' (Sal: ' || 'L.' || TO_CHAR(CC.SALARIO, 'FM999,999,999.00') || ' | Liq: ' || 'L.' || TO_CHAR(CC.LIQUIDACION, 'FM999,999,999.00') || ' | ' || CASE
+                    WHEN TP.NOMBRE != '1'
+                    AND TP.NOMBRE != 'Indefinido' THEN TP.NOMBRE || ' meses'
+                    WHEN TP.NOMBRE = 'Indefinido' THEN TP.NOMBRE
+                    ELSE TP.NOMBRE || ' mes'
+                END || ' | ' || UC.NOMBRE || ')' CONTRATO
+            FROM
+                PUBLIC.CONFIGURACIONES_CONTRATOS CC
+                JOIN TIPOS_CONTRATOS TP ON CC.ID_TIPO_CONTRATO = TP.ID
+                JOIN UBICACIONES_CONTRATOS UC ON CC.ID_UBICACION_CONTRATO = UC.ID
+            WHERE
+                CC.DELETED_AT IS NULL
+            ORDER BY
+                CONTRATO");
+
         return view('seprova.empleados')
                 ->with('empleados', $empleados)
                 ->with('tallas_camisas', $tallas_camisas)
                 ->with('tallas_pantalones', $tallas_pantalones)
-                ->with('tipo_sangre', $tipo_sangre);
+                ->with('tipo_sangre', $tipo_sangre)
+                ->with('estado_civil', $estado_civil)
+                ->with('contratos', $contratos);
     }
 
     public function guardar_empleados(Request $request){
@@ -98,6 +143,7 @@ class EmpleadosController extends Controller
         $check_seguro_social = ($request->check_seguro_social == 'true') ? 1 : 2;
         $check_rap =  ($request->check_rap == 'true') ? 1 : 2;
         $check_canon = ($request->check_canon == 'true') ? 1 : 2;
+        $estado_civil = $request->estado_civil;
         $nombre_conyugue = $request->nombre_conyugue;
         $domicilio = $request->domicilio;
         $ubicacion_casa = $request->ubicacion_casa;
@@ -130,12 +176,14 @@ class EmpleadosController extends Controller
                                 ID_TALLA_PANTALON,
                                 ID_TIPO_SANGRE,
                                 NOMBRE_CONYUGUE,
-                                UBICACION_CASA
+                                UBICACION_CASA,
+                                ID_ESTADO_CIVIL
                             )
                         VALUES
                             (:primer_nombre, :segundo_nombre, :primer_apellido, :segundo_apellido, :identidad, 
                             :telefono, :domicilio, :numero_poliza, :check_seguro_social, :check_rap, :check_canon, 
-                            :talla_camisa, :talla_pantalon, :tipo_sangre, :nombre_conyugue, :ubicacion_casa)
+                            :talla_camisa, :talla_pantalon, :tipo_sangre, :nombre_conyugue, :ubicacion_casa,
+                            :estado_civil)
                     returning id;",
                     ["primer_nombre" => $primer_nombre,
                     "segundo_nombre" => $segundo_nombre,
@@ -152,9 +200,10 @@ class EmpleadosController extends Controller
                     "check_canon" => $check_canon,
                     "nombre_conyugue" => $nombre_conyugue,
                     "domicilio" => $domicilio,
-                    "ubicacion_casa" => $ubicacion_casa]))->first();
+                    "ubicacion_casa" => $ubicacion_casa,
+                    "estado_civil" => $estado_civil]))->first();
                 
-                $msgSuccess = "Empleado '".$empleado->id."' Guardado Exitosamente.";
+                $msgSuccess = "Empleado ".$empleado->id." Guardado Exitosamente.";
                 $id = $empleado->id;
             }else if ($accion == 2) {
                 //throw new exception($ubicacion_casa, true);
@@ -176,6 +225,7 @@ class EmpleadosController extends Controller
                             ID_TIPO_SANGRE = :tipo_sangre,
                             NOMBRE_CONYUGUE = :nombre_conyugue,
                             UBICACION_CASA = :ubicacion_casa,
+                            ID_ESTADO_CIVIL = :estado_civil,
                             UPDATED_AT = NOW()
                         WHERE
                             ID = :id;",
@@ -195,7 +245,8 @@ class EmpleadosController extends Controller
                     "check_canon" => $check_canon,
                     "nombre_conyugue" => $nombre_conyugue,
                     "domicilio" => $domicilio,
-                    "ubicacion_casa" => $ubicacion_casa]);
+                    "ubicacion_casa" => $ubicacion_casa,
+                    "estado_civil" => $estado_civil]);
                 $estatus = true;
                 $msgSuccess = "Empleado " . $id . " Actualizado Exitosamente.";
             }else if ($accion == 3) {
@@ -242,6 +293,8 @@ class EmpleadosController extends Controller
                         TP.NOMBRE TALLA_PANTALON,
                         E.ID_TIPO_SANGRE,
                         TS.NOMBRE TIPO_SANGRE,
+                        EC.ID ID_ESTADO_CIVIL,
+                        EC.NOMBRE ESTADO_CIVIL,
                         E.NOMBRE_CONYUGUE,
                         E.UBICACION_CASA,
                         E.CREATED_AT
@@ -250,6 +303,7 @@ class EmpleadosController extends Controller
                         JOIN TALLAS_CAMISAS TC ON E.ID_TALLA_CAMISA = TC.ID
                         JOIN TALLAS_PANTALONES TP ON E.ID_TALLA_PANTALON = TP.ID
                         JOIN TIPOS_SANGRE TS ON E.ID_TIPO_SANGRE = TS.ID
+                        LEFT JOIN ESTADO_CIVIL EC ON E.ID_ESTADO_CIVIL = EC.ID
                     WHERE
                         E.DELETED_AT IS NULL
                         AND E.ID = :id;", ["id" => $id]))->first();
