@@ -329,28 +329,31 @@
                 <div id="map"></div>
                 <!-- <p>Coordenadas: <span id="coords">N/A</span></p> -->
             </div>
-            <hr>
             <div class="col-span-12 md:col-span-12 lg:col-span-12">
+                <hr>
+            </div>
+            <div id="div_modal_select_contrato" class="col-span-12 md:col-span-12 lg:col-span-12">
                 <x-base.form-label class="font-extrabold" for="modal_select_contrato">
                     Contrato Actual
                 </x-base.form-label>
                 <x-base.tom-select
                                     class="w-full"
-                                    data-placeholder="Elija un contrato"
+                                    data-placeholder="Buscar"
                                     id="modal_select_contrato"
                                 >
+                                <option disabled selected>Elija una opción</option>
                                 @foreach($contratos as $row)
                                     <option data-valueId="{{$row->id}}" data-valueMeses="{{$row->meses}}">{{$row->contrato}}</option>
                                 @endforeach
                                 </x-base.tom-select>
             </div>
-            <div class="col-span-12 md:col-span-12 lg:col-span-6">
+            <div id="div_modal_fecha_inicio_contrato" class="col-span-12 md:col-span-12 lg:col-span-6">
                 <x-base.form-label class="font-extrabold" for="modal_fecha_inicio_contrato">
                     Fecha de Inicio
                 </x-base.form-label>
                 <x-base.form-input id="modal_fecha_inicio_contrato" type="date"/>
             </div>
-            <div class="col-span-12 md:col-span-12 lg:col-span-6">
+            <div id="div_modal_fecha_finalizacion_contrato" class="col-span-12 md:col-span-12 lg:col-span-6">
                 <x-base.form-label class="font-extrabold" for="modal_fecha_finalizacion_contrato">
                     Fecha de Finalización
                 </x-base.form-label>
@@ -438,6 +441,8 @@
             var marker = null;
             var id_contrato = null;
             var contrato_meses = null;
+            var fecha_inicio_contrato = null;
+            var fecha_finalizacion_contrato = null;
             var url_guardar_empleado = "{{url('/empleados/guardar')}}";
             var onTomSelect = false;
             var tomSelect = null;
@@ -592,6 +597,9 @@
                 $("#modal_select_estado_civil").val(estado_civil);
                 $("#modal_input_nombre_conyugue").val(nombre_conyugue);
                 $("#modal_input_domicilio").val(domicilio);
+                $('#div_modal_select_contrato').hide();
+                $('#div_modal_fecha_inicio_contrato').hide();
+                $('#div_modal_fecha_finalizacion_contrato').hide();
                 //console.log(ubicacion_casa);
                 if (marker) {
                     marker.setLatLng(ubicacion_casa);
@@ -637,8 +645,15 @@
                 $('#modal_input_nombre_conyugue').prop('disabled', true);
                 $("#modal_input_nombre_conyugue").val('');
                 $("#modal_input_domicilio").val('');
+                $("#modal_select_contrato").val('');
+                $('#modal_fecha_inicio_contrato').val('');
                 $('#modal_fecha_inicio_contrato').prop('disabled', true);
+                $('#modal_fecha_finalizacion_contrato').val('');
                 $('#modal_fecha_finalizacion_contrato').prop('disabled', true);
+                $('#div_modal_select_contrato').show();
+                $('#div_modal_fecha_inicio_contrato').show();
+                $('#div_modal_fecha_finalizacion_contrato').show();
+                
                 
                 accion = 1;
                 const el = document.querySelector("#modal_nuevo_empleado");
@@ -695,6 +710,8 @@
                 estado_civil = $("#modal_select_estado_civil").val();
                 nombre_conyugue = $("#modal_input_nombre_conyugue").val();
                 domicilio = $("#modal_input_domicilio").val();
+                fecha_inicio_contrato = $("#modal_fecha_inicio_contrato").val();
+                fecha_finalizacion_contrato = $("#modal_fecha_finalizacion_contrato").val();
 
                 //console.log(ubicacion_casa);
                 
@@ -839,7 +856,10 @@
                         'estado_civil' : estado_civil,
                         'nombre_conyugue' : nombre_conyugue,
                         'domicilio' : domicilio,
-                        'ubicacion_casa' : ubicacion_casa
+                        'ubicacion_casa' : ubicacion_casa,
+                        'id_contrato' : id_contrato,
+                        'fecha_inicio_contrato' : fecha_inicio_contrato,
+                        'fecha_finalizacion_contrato' : fecha_finalizacion_contrato
                     },
                     success: function(data) {
                         if (data.msgError) {

@@ -189,6 +189,80 @@
                         <div id="map" class="col-span-1 lg:col-span-7" style="height: 400px; background-color: #e2e8f0;"></div>
                     </div>
                 </div>
+                <div class="intro-y box col-span-12">
+                    <div
+                        class="flex items-center border-b border-slate-200/60 px-5 py-5 dark:border-darkmode-400 sm:py-3">
+                        <h2 class="mr-auto text-base font-medium">
+                            Historial de Contratos
+                        </h2>
+                    </div>
+                    <div class="grid grid-cols-1 gap-6 p-5 sm:grid-cols-3 lg:grid-cols-7">
+                    <div class="scrollbar-hidden overflow-x-auto">
+        <table id="sdatatable" class="display datatable" style="width:100%">
+            <thead>
+                <tr class="bg-dark text-white">
+                    <th>ID</th>
+                    <th>Contrato</th>
+                    <th>Salario</th>
+                    <th>Liquidación</th>
+                    <th>Tipo de Contrato</th>
+                    <th>Ubicación</th>
+                    <th>Fecha de Inicio</th>
+                    <th>Fecha de Finalización</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($contratos_empleado as $row)
+                        <tr>
+                            <td>{{$row->id}}</td>
+                            <td>{{$row->nombre}}</td>
+                            <td>{{$row->salario_formato}}</td>
+                            <td>{{$row->liquidacion_formato}}</td>
+                            <td>{{$row->descripcion}}</td>
+                            <td>{{$row->ubicacion}}</td>
+                            <td>{{$row->fecha_inicio}}</td>
+                            <td>{{$row->fecha_finalizacion}}</td>
+                            <td>
+                                @if($row->estado == 'Activo')
+                                    <span class="mr-1 rounded-full bg-success px-2 text-xs text-white">{{$row->estado}}</span></td>
+                                @elseif($row->estado == 'Pendiente')
+                                    <span class="mr-1 rounded-full bg-pending px-2 text-xs text-white">{{$row->estado}}</span></td>
+                                @elseif($row->estado == 'Vencido')
+                                    <span class="mr-1 rounded-full bg-danger px-2 text-xs text-white">{{$row->estado}}</span></td>
+                                @endif
+                            <td>
+                                <x-base.button
+                                    class="mb-2 mr-1 editar"
+                                    variant="warning"
+                                    size="sm"
+                                    data-id="{{$row->id}}" 
+                                >
+                                    <x-base.lucide
+                                        class="h-4 w-4"
+                                        icon="Edit"
+                                    />
+                                </x-base.button>
+                                <x-base.button
+                                    class="mb-2 mr-1 eliminar"
+                                    variant="danger"
+                                    size="sm"
+                                    data-id="{{$row->id}}" 
+                                >
+                                    <x-base.lucide
+                                        class="h-4 w-4"
+                                        icon="Trash"
+                                    />
+                                </x-base.button>
+                            </td>
+                        </tr>
+                    @endforeach
+            </tbody>
+        </table>
+    </div>
+                    </div>
+                </div>
                 <!-- END: General Statistic -->
             </div>
         </x-base.tab.panel>
@@ -350,77 +424,79 @@
                                      }); 
 
             $('#sdatatable tbody').on('click', '.editar', function() {
-                map.setView([15.199999, -86.241905], 6);
-                accion = 2;
-                id = $(this).data('id');
-                primer_nombre = $(this).data('primer_nombre');
-                segundo_nombre = $(this).data('segundo_nombre');
-                primer_apellido = $(this).data('primer_apellido');
-                segundo_apellido = $(this).data('segundo_apellido');
-                telefono = $(this).data('telefono');
-                identidad = $(this).data('identidad');
-                numero_poliza = $(this).data('poliza_seguro');
-                if(numero_poliza == null || numero_poliza == ''){
-                    $('#modal_checkbox_poliza').prop('checked', false);
-                    $('#modal_input_numero_poliza').prop('disabled', true);
-                }else{
-                    $('#modal_checkbox_poliza').prop('checked', true);
-                    $('#modal_input_numero_poliza').prop('disabled', false);
-                }
-                tipo_sangre = $(this).data('id_tipo_sangre');
-                talla_camisa = $(this).data('id_talla_camisa');
-                talla_pantalon = $(this).data('id_talla_pantalon');
-                check_seguro_social = $(this).data('seguro_social');
-                if(check_seguro_social == 1){
-                    $('#modal_checkbox_seguro_social').prop('checked', true);
-                }else{
-                    $('#modal_checkbox_seguro_social').prop('checked', false);
-                }
-                check_rap = $(this).data('rap');
-                if(check_rap == 1){
-                    $('#modal_checkbox_rap').prop('checked', true);
-                }else{
-                    $('#modal_checkbox_rap').prop('checked', false);
-                }
-                check_canon = $(this).data('declarado_canon');
-                if(check_canon == 1){
-                    $('#modal_checkbox_canon').prop('checked', true);
-                }else{
-                    $('#modal_checkbox_canon').prop('checked', false);
-                }
-                nombre_conyugue = $(this).data('nombre_conyugue');
-                domicilio = $(this).data('direccion');
-                ubicacion_casa = $(this).data('ubicacion_casa');
-                $("#modal_input_primer_nombre").val(primer_nombre);
-                $("#modal_input_segundo_nombre").val(segundo_nombre);
-                $("#modal_input_primer_apellido").val(primer_apellido);
-                $("#modal_input_segundo_apellido").val(segundo_apellido);
-                $("#modal_input_telefono").val(telefono);
-                $("#modal_input_identidad").val(identidad);
-                $("#modal_input_numero_poliza").val(numero_poliza);
-                $("#modal_select_tipo_sangre").val(tipo_sangre);
-                $("#modal_select_talla_camisa").val(talla_camisa);
-                $("#modal_select_talla_pantalon").val(talla_pantalon);
-                $("#modal_input_nombre_conyugue").val(nombre_conyugue);
-                $("#modal_input_domicilio").val(domicilio);
-                //console.log(ubicacion_casa);
-                if (marker) {
-                    marker.setLatLng(ubicacion_casa);
-                } else {
-                    marker = L.marker(ubicacion_casa).addTo(map);
-                }
-                ubicacion_casa = '{"lat": '+ubicacion_casa.lat.toString() + ', "lng": ' + ubicacion_casa.lng.toString()+'}';
-                const el = document.querySelector("#modal_nuevo_empleado");
-                const modal = tailwind.Modal.getOrCreateInstance(el);
-                modal.show();
+                alert('Funcionalidad en desarrollo...');
+                // map.setView([15.199999, -86.241905], 6);
+                // accion = 2;
+                // id = $(this).data('id');
+                // primer_nombre = $(this).data('primer_nombre');
+                // segundo_nombre = $(this).data('segundo_nombre');
+                // primer_apellido = $(this).data('primer_apellido');
+                // segundo_apellido = $(this).data('segundo_apellido');
+                // telefono = $(this).data('telefono');
+                // identidad = $(this).data('identidad');
+                // numero_poliza = $(this).data('poliza_seguro');
+                // if(numero_poliza == null || numero_poliza == ''){
+                //     $('#modal_checkbox_poliza').prop('checked', false);
+                //     $('#modal_input_numero_poliza').prop('disabled', true);
+                // }else{
+                //     $('#modal_checkbox_poliza').prop('checked', true);
+                //     $('#modal_input_numero_poliza').prop('disabled', false);
+                // }
+                // tipo_sangre = $(this).data('id_tipo_sangre');
+                // talla_camisa = $(this).data('id_talla_camisa');
+                // talla_pantalon = $(this).data('id_talla_pantalon');
+                // check_seguro_social = $(this).data('seguro_social');
+                // if(check_seguro_social == 1){
+                //     $('#modal_checkbox_seguro_social').prop('checked', true);
+                // }else{
+                //     $('#modal_checkbox_seguro_social').prop('checked', false);
+                // }
+                // check_rap = $(this).data('rap');
+                // if(check_rap == 1){
+                //     $('#modal_checkbox_rap').prop('checked', true);
+                // }else{
+                //     $('#modal_checkbox_rap').prop('checked', false);
+                // }
+                // check_canon = $(this).data('declarado_canon');
+                // if(check_canon == 1){
+                //     $('#modal_checkbox_canon').prop('checked', true);
+                // }else{
+                //     $('#modal_checkbox_canon').prop('checked', false);
+                // }
+                // nombre_conyugue = $(this).data('nombre_conyugue');
+                // domicilio = $(this).data('direccion');
+                // ubicacion_casa = $(this).data('ubicacion_casa');
+                // $("#modal_input_primer_nombre").val(primer_nombre);
+                // $("#modal_input_segundo_nombre").val(segundo_nombre);
+                // $("#modal_input_primer_apellido").val(primer_apellido);
+                // $("#modal_input_segundo_apellido").val(segundo_apellido);
+                // $("#modal_input_telefono").val(telefono);
+                // $("#modal_input_identidad").val(identidad);
+                // $("#modal_input_numero_poliza").val(numero_poliza);
+                // $("#modal_select_tipo_sangre").val(tipo_sangre);
+                // $("#modal_select_talla_camisa").val(talla_camisa);
+                // $("#modal_select_talla_pantalon").val(talla_pantalon);
+                // $("#modal_input_nombre_conyugue").val(nombre_conyugue);
+                // $("#modal_input_domicilio").val(domicilio);
+                // //console.log(ubicacion_casa);
+                // if (marker) {
+                //     marker.setLatLng(ubicacion_casa);
+                // } else {
+                //     marker = L.marker(ubicacion_casa).addTo(map);
+                // }
+                // ubicacion_casa = '{"lat": '+ubicacion_casa.lat.toString() + ', "lng": ' + ubicacion_casa.lng.toString()+'}';
+                // const el = document.querySelector("#modal_nuevo_empleado");
+                // const modal = tailwind.Modal.getOrCreateInstance(el);
+                // modal.show();
             });
 
             $('#sdatatable tbody').on('click', '.eliminar', function() {
-                accion = 3;
-                id = $(this).data('id');;
-                const el = document.querySelector("#modal_eliminar");
-                const modal = tailwind.Modal.getOrCreateInstance(el);
-                modal.show(); 
+                alert('Funcionalidad en desarrollo...');
+                // accion = 3;
+                // id = $(this).data('id');;
+                // const el = document.querySelector("#modal_eliminar");
+                // const modal = tailwind.Modal.getOrCreateInstance(el);
+                // modal.show(); 
             });
 
             $("#btn_subir_foto").on("click", function (event) {

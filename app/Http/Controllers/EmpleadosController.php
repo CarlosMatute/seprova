@@ -147,6 +147,9 @@ class EmpleadosController extends Controller
         $nombre_conyugue = $request->nombre_conyugue;
         $domicilio = $request->domicilio;
         $ubicacion_casa = $request->ubicacion_casa;
+        $id_contrato = $request->id_contrato;
+        $fecha_inicio_contrato = $request->fecha_inicio_contrato;
+        $fecha_finalizacion_contrato = $request->fecha_finalizacion_contrato;
         $empleados_list = null;
         $msgError = null;
         $msgSuccess = null;
@@ -205,6 +208,21 @@ class EmpleadosController extends Controller
                 
                 $msgSuccess = "Empleado ".$empleado->id." Guardado Exitosamente.";
                 $id = $empleado->id;
+                
+                if(($id_contrato != null || $id_contrato != '') && ($fecha_inicio_contrato != null || $fecha_inicio_contrato != '')){
+                    DB::select("INSERT INTO
+                        PUBLIC.EMPLEADOS_CONTRATOS (
+                            ID_EMPLEADO,
+                            ID_CONFIGURACION_CONTRATO,
+                            FECHA_INICIO,
+                            FECHA_FINALIZACION
+                        )
+                    VALUES
+                        (:id, :id_contrato, :fecha_inicio_contrato, :fecha_finalizacion_contrato);", 
+                        ["id" => $id, "id_contrato" => $id_contrato,
+                        "fecha_inicio_contrato" => $fecha_inicio_contrato,
+                        "fecha_finalizacion_contrato" => $fecha_finalizacion_contrato]);
+                }
             }else if ($accion == 2) {
                 //throw new exception($ubicacion_casa, true);
                 DB::select("UPDATE PUBLIC.EMPLEADOS
@@ -364,8 +382,45 @@ class EmpleadosController extends Controller
                     WHERE
                         E.DELETED_AT IS NULL
                         AND E.ID = :id;", ["id" => $id_empleado]))->first();
+
+        $contratos_empleado = DB::select("SELECT
+                    CC.ID,
+                    CC.NOMBRE,
+                    CC.SALARIO,
+                    'L.' || TO_CHAR(CC.SALARIO, 'FM999,999,999.00') SALARIO_FORMATO,
+                    CC.LIQUIDACION,
+                    'L.' || TO_CHAR(CC.LIQUIDACION, 'FM999,999,999.00') LIQUIDACION_FORMATO,
+                    CC.ID_TIPO_CONTRATO,
+                    TP.DESCRIPCION,
+                    CC.ID_UBICACION_CONTRATO,
+                    UC.NOMBRE UBICACION,
+                    EC.FECHA_INICIO,
+                    EC.FECHA_FINALIZACION,
+                    CASE
+                        WHEN NOW() < EC.FECHA_INICIO THEN 'Pendiente'
+                        WHEN NOW() > EC.FECHA_FINALIZACION THEN 'Vencido'
+                        WHEN (
+                            NOW() BETWEEN EC.FECHA_INICIO AND EC.FECHA_FINALIZACION
+                        )
+                        OR (
+                            NOW() >= EC.FECHA_INICIO
+                            AND EC.FECHA_FINALIZACION IS NULL
+                        ) THEN 'Activo'
+                        ELSE NULL
+                    END ESTADO
+                FROM
+                    PUBLIC.CONFIGURACIONES_CONTRATOS CC
+                    JOIN TIPOS_CONTRATOS TP ON CC.ID_TIPO_CONTRATO = TP.ID
+                    JOIN UBICACIONES_CONTRATOS UC ON CC.ID_UBICACION_CONTRATO = UC.ID
+                    JOIN EMPLEADOS_CONTRATOS EC ON CC.ID = EC.ID_CONFIGURACION_CONTRATO
+                    AND EC.ID_EMPLEADO = :id
+                WHERE
+                    CC.DELETED_AT IS NULL
+                    ORDER BY
+	                    ESTADO;", ["id" => $id_empleado]);
         return view('seprova.empleadosExpedientes')
-                    ->with("empleado", $empleado);
+                    ->with("empleado", $empleado)
+                    ->with("contratos_empleado", $contratos_empleado);
         
     }
 
