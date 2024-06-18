@@ -185,7 +185,7 @@
                             Ubicación de Casa
                         </h2>
                     </div>
-                    <div class="grid grid-cols-1 gap-6 p-5 sm:grid-cols-3 lg:grid-cols-7">
+                    <div class="w-full gap-6 p-5 sm:grid-cols-3 lg:grid-cols-7">
                         <div id="map" class="col-span-1 lg:col-span-7" style="height: 400px; background-color: #e2e8f0;"></div>
                     </div>
                 </div>
@@ -196,71 +196,71 @@
                             Historial de Contratos
                         </h2>
                     </div>
-                    <div class="grid grid-cols-1 gap-6 p-5 sm:grid-cols-3 lg:grid-cols-7">
-                    <div class="scrollbar-hidden overflow-x-auto">
-        <table id="sdatatable" class="display datatable" style="width:100%">
-            <thead>
-                <tr class="bg-dark text-white">
-                    <th>ID</th>
-                    <th>Contrato</th>
-                    <th>Salario</th>
-                    <th>Liquidación</th>
-                    <th>Tipo de Contrato</th>
-                    <th>Ubicación</th>
-                    <th>Fecha de Inicio</th>
-                    <th>Fecha de Finalización</th>
-                    <th>Estado</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($contratos_empleado as $row)
-                        <tr>
-                            <td>{{$row->id}}</td>
-                            <td>{{$row->nombre}}</td>
-                            <td>{{$row->salario_formato}}</td>
-                            <td>{{$row->liquidacion_formato}}</td>
-                            <td>{{$row->descripcion}}</td>
-                            <td>{{$row->ubicacion}}</td>
-                            <td>{{$row->fecha_inicio}}</td>
-                            <td>{{$row->fecha_finalizacion}}</td>
-                            <td>
-                                @if($row->estado == 'Activo')
-                                    <span class="mr-1 rounded-full bg-success px-2 text-xs text-white">{{$row->estado}}</span></td>
-                                @elseif($row->estado == 'Pendiente')
-                                    <span class="mr-1 rounded-full bg-pending px-2 text-xs text-white">{{$row->estado}}</span></td>
-                                @elseif($row->estado == 'Vencido')
-                                    <span class="mr-1 rounded-full bg-danger px-2 text-xs text-white">{{$row->estado}}</span></td>
-                                @endif
-                            <td>
-                                <x-base.button
-                                    class="mb-2 mr-1 editar"
-                                    variant="warning"
-                                    size="sm"
-                                    data-id="{{$row->id}}" 
-                                >
-                                    <x-base.lucide
-                                        class="h-4 w-4"
-                                        icon="Edit"
-                                    />
-                                </x-base.button>
-                                <x-base.button
-                                    class="mb-2 mr-1 eliminar"
-                                    variant="danger"
-                                    size="sm"
-                                    data-id="{{$row->id}}" 
-                                >
-                                    <x-base.lucide
-                                        class="h-4 w-4"
-                                        icon="Trash"
-                                    />
-                                </x-base.button>
-                            </td>
-                        </tr>
-                    @endforeach
-            </tbody>
-        </table>
-    </div>
+                    <div class="w-full gap-6 p-5 sm:grid-cols-12 lg:grid-cols-12">
+                        <div class="scrollbar-hidden overflow-x-auto">
+                            <table id="sdatatable" class="display datatable" style="width:100%">
+                                <thead>
+                                    <tr class="bg-dark text-white">
+                                        <th>ID</th>
+                                        <th>Contrato</th>
+                                        <th>Salario</th>
+                                        <th>Liquidación</th>
+                                        <th>Tipo de Contrato</th>
+                                        <th>Ubicación</th>
+                                        <th>Fecha de Inicio</th>
+                                        <th>Fecha de Finalización</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($contratos_empleado as $row)
+                                            <tr>
+                                                <td>{{$row->id}}</td>
+                                                <td>{{$row->nombre}}</td>
+                                                <td>{{$row->salario_formato}}</td>
+                                                <td>{{$row->liquidacion_formato}}</td>
+                                                <td>{{$row->descripcion}}</td>
+                                                <td>{{$row->ubicacion}}</td>
+                                                <td>{{$row->fecha_inicio}}</td>
+                                                <td>{{$row->fecha_finalizacion}}</td>
+                                                <td>
+                                                    @if($row->estado == 'Activo')
+                                                        <span class="mr-1 rounded-full bg-success px-2 text-xs text-white">{{$row->estado}}</span></td>
+                                                    @elseif($row->estado == 'Pendiente')
+                                                        <span class="mr-1 rounded-full bg-pending px-2 text-xs text-white">{{$row->estado}}</span></td>
+                                                    @elseif($row->estado == 'Vencido')
+                                                        <span class="mr-1 rounded-full bg-danger px-2 text-xs text-white">{{$row->estado}}</span></td>
+                                                    @endif
+                                                <td>
+                                                    <x-base.button
+                                                        class="mb-2 mr-1 editar"
+                                                        variant="warning"
+                                                        size="sm"
+                                                        data-id="{{$row->id}}" 
+                                                    >
+                                                        <x-base.lucide
+                                                            class="h-4 w-4"
+                                                            icon="Edit"
+                                                        />
+                                                    </x-base.button>
+                                                    <x-base.button
+                                                        class="mb-2 mr-1 eliminar"
+                                                        variant="danger"
+                                                        size="sm"
+                                                        data-id="{{$row->id}}" 
+                                                    >
+                                                        <x-base.lucide
+                                                            class="h-4 w-4"
+                                                            icon="Trash"
+                                                        />
+                                                    </x-base.button>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
                 <!-- END: General Statistic -->
