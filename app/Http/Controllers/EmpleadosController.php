@@ -107,15 +107,22 @@ class EmpleadosController extends Controller
                     AND TP.NOMBRE != 'Indefinido' THEN TP.NOMBRE || ' meses'
                     WHEN TP.NOMBRE = 'Indefinido' THEN TP.NOMBRE
                     ELSE TP.NOMBRE || ' mes'
-                END || ' | ' || UC.NOMBRE || ')' CONTRATO
+                END || ')' CONTRATO
             FROM
                 PUBLIC.CONFIGURACIONES_CONTRATOS CC
                 JOIN TIPOS_CONTRATOS TP ON CC.ID_TIPO_CONTRATO = TP.ID
-                JOIN UBICACIONES_CONTRATOS UC ON CC.ID_UBICACION_CONTRATO = UC.ID
             WHERE
                 CC.DELETED_AT IS NULL
             ORDER BY
                 CONTRATO");
+            
+        $ubicaciones_contratos = DB::select("SELECT
+                ID,
+                NOMBRE
+            FROM
+                UBICACIONES_CONTRATOS
+            WHERE
+                DELETED_AT IS NULL");
 
         return view('seprova.empleados')
                 ->with('empleados', $empleados)
@@ -123,7 +130,8 @@ class EmpleadosController extends Controller
                 ->with('tallas_pantalones', $tallas_pantalones)
                 ->with('tipo_sangre', $tipo_sangre)
                 ->with('estado_civil', $estado_civil)
-                ->with('contratos', $contratos);
+                ->with('contratos', $contratos)
+                ->with('ubicaciones_contratos', $ubicaciones_contratos);
     }
 
     public function guardar_empleados(Request $request){

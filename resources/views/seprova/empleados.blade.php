@@ -305,7 +305,7 @@
                                 </x-base.form-check>
                             </div>
             </div>
-            <div class="col-span-12 md:col-span-12 lg:col-span-4">
+            <div class="col-span-12 md:col-span-12 lg:col-span-2">
                 <x-base.form-label class="font-extrabold" for="modal_select_estado_civil">
                     Estado Civil
                 </x-base.form-label>
@@ -315,11 +315,17 @@
                     @endforeach
                 </x-base.form-select>
             </div>
-            <div class="col-span-12 md:col-span-12 lg:col-span-8">
+            <div class="col-span-12 md:col-span-12 lg:col-span-6">
                 <x-base.form-label class="font-extrabold" for="modal_input_nombre_conyugue">
                     Nombre Completo del Conyugue
                 </x-base.form-label>
                 <x-base.form-input id="modal_input_nombre_conyugue" type="text" placeholder="Escriba el Nombre del Conyugue" />
+            </div>
+            <div class="col-span-12 md:col-span-12 lg:col-span-4">
+                <x-base.form-label class="font-extrabold" for="modal_input_identidad_conyugue">
+                    Número de dentidad del Conyugue
+                </x-base.form-label>
+                <x-base.form-input id="modal_input_identidad_conyugue" type="number" placeholder="Escriba la Identidad del Conyugue" />
             </div>
             <div class="col-span-12 md:col-span-12 lg:col-span-12">
                 <x-base.form-label class="font-extrabold" for="modal_input_domicilio">
@@ -332,7 +338,7 @@
             <div class="col-span-12 md:col-span-12 lg:col-span-12">
                 <hr>
             </div>
-            <div id="div_modal_select_contrato" class="col-span-12 md:col-span-12 lg:col-span-12">
+            <div id="div_modal_select_contrato" class="col-span-12 md:col-span-12 lg:col-span-6">
                 <x-base.form-label class="font-extrabold" for="modal_select_contrato">
                     Contrato Actual
                 </x-base.form-label>
@@ -347,6 +353,21 @@
                                 @endforeach
                                 </x-base.tom-select>
             </div>
+            <div id="div_modal_select_contrato" class="col-span-12 md:col-span-12 lg:col-span-6">
+                <x-base.form-label class="font-extrabold" for="modal_select_contrato">
+                    Ubicación del Contrato
+                </x-base.form-label>
+                <x-base.tom-select
+                                    class="w-full"
+                                    data-placeholder="Buscar"
+                                    id="modal_select_contrato"
+                                >
+                                <option disabled selected>Elija una opción</option>
+                                @foreach($ubicaciones_contratos as $row)
+                                    <option value="{{$row->id}}">{{$row->nombre}}</option>
+                                @endforeach
+                                </x-base.tom-select>
+            </div>
             <div id="div_modal_fecha_inicio_contrato" class="col-span-12 md:col-span-12 lg:col-span-6">
                 <x-base.form-label class="font-extrabold" for="modal_fecha_inicio_contrato">
                     Fecha de Inicio
@@ -358,6 +379,18 @@
                     Fecha de Finalización
                 </x-base.form-label>
                 <x-base.form-input id="modal_fecha_finalizacion_contrato" type="date"/>
+            </div>
+            <div class="col-span-12 md:col-span-12 lg:col-span-6">
+                <x-base.form-label class="font-extrabold" for="modal_fileInput_cirriculum">
+                        Cargar Cirriculum
+                    </x-base.form-label>
+                    <input type="file" id="modal_fileInput_cirriculum" name="profile_picture" accept="application/pdf" required class="mb-4">
+            </div>
+            <div class="col-span-12 md:col-span-12 lg:col-span-6">
+                <x-base.form-label class="font-extrabold" for="modal_fileInput_contrato">
+                        Cargar Contrato&nbsp;&nbsp;
+                    </x-base.form-label>
+                    <input type="file" id="modal_fileInput_contrato" name="profile_picture" accept="application/pdf" required class="mb-4">
             </div>
         </x-base.dialog.description>
         <x-base.dialog.footer class="bg-dark">
@@ -577,9 +610,12 @@
                 estado_civil = $(this).data('id_estado_civil');
                 if (estado_civil == 2) {
                     $('#modal_input_nombre_conyugue').prop('disabled', false);
+                    $('#modal_input_identidad_conyugue').prop('disabled', false);
                 } else {
                     $('#modal_input_nombre_conyugue').prop('disabled', true);
+                    $('#modal_input_identidad_conyugue').prop('disabled', true);
                     $("#modal_input_nombre_conyugue").val('');
+                    $("#modal_input_identidad_conyugue").val('');
                 }
                 nombre_conyugue = $(this).data('nombre_conyugue');
                 domicilio = $(this).data('direccion');
@@ -644,6 +680,8 @@
                 $("#modal_select_estado_civil").val('');
                 $('#modal_input_nombre_conyugue').prop('disabled', true);
                 $("#modal_input_nombre_conyugue").val('');
+                $('#modal_input_identidad_conyugue').prop('disabled', true);
+                $("#modal_input_identidad_conyugue").val('');
                 $("#modal_input_domicilio").val('');
                 $("#modal_select_contrato").val('');
                 $('#modal_fecha_inicio_contrato').val('');
@@ -673,10 +711,10 @@
             $('#modal_select_estado_civil').change(function(){
                 estado_civil = $("#modal_select_estado_civil").val();
                 if (estado_civil == 2) {
-                    $('#modal_input_nombre_conyugue').prop('disabled', false);
+                    $('#modal_input_nombre_conyugue, #modal_input_identidad_conyugue').prop('disabled', false);
                 } else {
-                    $('#modal_input_nombre_conyugue').prop('disabled', true);
-                    $("#modal_input_nombre_conyugue").val('');
+                    $('#modal_input_nombre_conyugue, #modal_input_identidad_conyugue').prop('disabled', true);
+                    $("#modal_input_nombre_conyugue, #modal_input_identidad_conyugue").val('');
                 }
             });
 
