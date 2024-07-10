@@ -161,7 +161,8 @@ class EmpleadosController extends Controller
         $empleados_list = null;
         $msgError = null;
         $msgSuccess = null;
-
+        //return redirect()->back();
+        dd($check_seguro_vida);
         if ($id == null && $accion == 2) {
             $accion = 1;
         }

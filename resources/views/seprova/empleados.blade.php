@@ -167,6 +167,8 @@
 <!-- BEGIN: Modal Content -->
 <x-base.dialog id="modal_nuevo_empleado" size="xl" staticBackdrop>
     <x-base.dialog.panel>
+    <form action="{{url('/empleados/guardar')}}" method="POST" enctype="multipart/form-data">
+        @csrf
         <x-base.dialog.title class="bg-primary">
             <h2 class="mr-auto text-white font-medium">
                 <div class="flex items-center">
@@ -186,222 +188,229 @@
                                 </a>
         </x-base.dialog.title>
         <x-base.dialog.description class="grid grid-cols-12 gap-4 gap-y-3">
-            <div class="col-span-12 md:col-span-12 lg:col-span-6">
-                <x-base.form-label class="font-extrabold" for="modal_input_primer_nombre">
-                    Primer Nombre
-                </x-base.form-label>
-                <x-base.form-input id="modal_input_primer_nombre" type="text" placeholder="Escriba el Primer Nombre" />
-            </div>
-            <div class="col-span-12 md:col-span-12 lg:col-span-6">
-                <x-base.form-label class="font-extrabold" for="modal_input_segundo_nombre">
-                    Segundo Nombre
-                </x-base.form-label>
-                <x-base.form-input id="modal_input_segundo_nombre" type="text" placeholder="Escriba el Segundo Nombre" />
-            </div>
-            <div class="col-span-12 md:col-span-12 lg:col-span-6">
-                <x-base.form-label class="font-extrabold" for="modal_input_primer_apellido">
-                    Primer Apellido
-                </x-base.form-label>
-                <x-base.form-input id="modal_input_primer_apellido" type="text" placeholder="Escriba el Primer Apellido" />
-            </div>
-            <div class="col-span-12 md:col-span-12 lg:col-span-6">
-                <x-base.form-label class="font-extrabold" for="modal_input_segundo_apellido">
-                    Segundo Apellido
-                </x-base.form-label>
-                <x-base.form-input id="modal_input_segundo_apellido" type="text" placeholder="Escriba el Segundo Apellido" />
-            </div>
-            <div class="col-span-12 md:col-span-12 lg:col-span-4">
-                <x-base.form-label class="font-extrabold" for="modal_input_telefono">
-                    Teléfono
-                </x-base.form-label>
-                <x-base.form-input id="modal_input_telefono" type="number" placeholder="Escriba el Teléfono" />
-            </div>
-            <div class="col-span-12 md:col-span-12 lg:col-span-4">
-                <x-base.form-label class="font-extrabold" for="modal_input_identidad">
-                    Identidad
-                </x-base.form-label>
-                <x-base.form-input id="modal_input_identidad" type="number" placeholder="Escriba la Identidad" />
-            </div>
-            <div class="col-span-12 md:col-span-12 lg:col-span-4">
-                <x-base.form-label class="font-extrabold" for="modal_input_numero_poliza">
-                <x-base.form-check class="mr-2">
-                                    <x-base.form-check.input
-                                        id="modal_checkbox_poliza"
-                                        type="checkbox"
-                                    />
-                                    <x-base.form-check.label for="modal_checkbox_poliza">
-                                        Aplica Seguro de Vida
-                                    </x-base.form-check.label>
-                                </x-base.form-check>
-                </x-base.form-label>
-                <x-base.form-input disabled id="modal_input_numero_poliza" type="number" placeholder="Escriba el Número de Póliza" />
-            </div>
-            <div class="col-span-12 md:col-span-12 lg:col-span-2">
-                <x-base.form-label class="font-extrabold" for="modal_select_tipo_sangre">
-                    Tipo de Sangre
-                </x-base.form-label>
-                <x-base.form-select id="modal_select_tipo_sangre" class="w-full">
-                    @foreach($tipo_sangre as $row)
-                        <option value="{{$row->id}}">{{$row->nombre}}</option>
-                    @endforeach
-                </x-base.form-select>
-            </div>
-            <div class="col-span-12 md:col-span-12 lg:col-span-2">
-                <x-base.form-label class="font-extrabold" for="modal_select_talla_camisa">
-                    Talla de Camisa
-                </x-base.form-label>
-                <x-base.form-select id="modal_select_talla_camisa" class="w-full">
-                    @foreach($tallas_camisas as $row)
-                        <option value="{{$row->id}}">{{$row->nombre}}</option>
-                    @endforeach
-                </x-base.form-select>
-            </div>
-            <div class="col-span-12 md:col-span-12 lg:col-span-2">
-                <x-base.form-label class="font-extrabold" for="modal_select_talla_pantalon">
-                    Talla de Pantalón
-                </x-base.form-label>
-                <x-base.form-select id="modal_select_talla_pantalon" class="w-full">
-                    @foreach($tallas_pantalones as $row)
-                        <option value="{{$row->id}}">{{$row->nombre}}</option>
-                    @endforeach
-                </x-base.form-select>
-            </div>
-            <div class="col-span-12 md:col-span-12 lg:col-span-6">
-            <x-base.form-label class="font-extrabold">
-                    Marque las opciones que aplica el empleado
-                </x-base.form-label>
-            <div class="mt-2 flex flex-col sm:flex-row">
-                                <x-base.form-check class="mr-2">
-                                    <x-base.form-check.input
-                                        id="modal_checkbox_seguro_social"
-                                        type="checkbox"
-                                        value=""
-                                    />
-                                    <x-base.form-check.label for="modal_checkbox_seguro_social">
-                                        Seguro Social
-                                    </x-base.form-check.label>
-                                </x-base.form-check>
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                <x-base.form-check class="mt-2 mr-2 sm:mt-0">
-                                    <x-base.form-check.input
-                                        id="modal_checkbox_rap"
-                                        type="checkbox"
-                                        value=""
-                                    />
-                                    <x-base.form-check.label for="modal_checkbox_rap">
-                                        RAP
-                                    </x-base.form-check.label>
-                                </x-base.form-check>
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                <x-base.form-check class="mt-2 mr-2 sm:mt-0">
-                                    <x-base.form-check.input
-                                        id="modal_checkbox_canon"
-                                        type="checkbox"
-                                        value=""
-                                    />
-                                    <x-base.form-check.label for="modal_checkbox_canon">
-                                        CANON
-                                    </x-base.form-check.label>
-                                </x-base.form-check>
-                            </div>
-            </div>
-            <div class="col-span-12 md:col-span-12 lg:col-span-2">
-                <x-base.form-label class="font-extrabold" for="modal_select_estado_civil">
-                    Estado Civil
-                </x-base.form-label>
-                <x-base.form-select id="modal_select_estado_civil" class="w-full">
-                    @foreach($estado_civil as $row)
-                        <option value="{{$row->id}}">{{$row->nombre}}</option>
-                    @endforeach
-                </x-base.form-select>
-            </div>
-            <div class="col-span-12 md:col-span-12 lg:col-span-6">
-                <x-base.form-label class="font-extrabold" for="modal_input_nombre_conyugue">
-                    Nombre Completo del Conyugue
-                </x-base.form-label>
-                <x-base.form-input id="modal_input_nombre_conyugue" type="text" placeholder="Escriba el Nombre del Conyugue" />
-            </div>
-            <div class="col-span-12 md:col-span-12 lg:col-span-4">
-                <x-base.form-label class="font-extrabold" for="modal_input_identidad_conyugue">
-                    Número de dentidad del Conyugue
-                </x-base.form-label>
-                <x-base.form-input id="modal_input_identidad_conyugue" type="number" placeholder="Escriba la Identidad del Conyugue" />
-            </div>
-            <div class="col-span-12 md:col-span-12 lg:col-span-12">
-                <x-base.form-label class="font-extrabold" for="modal_input_domicilio">
-                    Domicilio y Ubicación de Casa
-                </x-base.form-label>
-                <x-base.form-textarea rows="5" id="modal_input_domicilio" placeholder="Escriba la dirección exacta."></x-base.form-textarea>
-                <div id="map"></div>
-                <!-- <p>Coordenadas: <span id="coords">N/A</span></p> -->
-            </div>
-            <div class="col-span-12 md:col-span-12 lg:col-span-12">
-                <hr>
-            </div>
-            <div id="div_modal_select_contrato" class="col-span-12 md:col-span-12 lg:col-span-6">
-                <x-base.form-label class="font-extrabold" for="modal_select_contrato">
-                    Contrato Actual
-                </x-base.form-label>
-                <x-base.tom-select
-                                    class="w-full"
-                                    data-placeholder="Buscar"
-                                    id="modal_select_contrato"
-                                >
-                                <option disabled selected>Elija una opción</option>
-                                @foreach($contratos as $row)
-                                    <option data-valueId="{{$row->id}}" data-valueMeses="{{$row->meses}}">{{$row->contrato}}</option>
-                                @endforeach
-                                </x-base.tom-select>
-            </div>
-            <div id="div_modal_select_contrato" class="col-span-12 md:col-span-12 lg:col-span-6">
-                <x-base.form-label class="font-extrabold" for="modal_select_contrato">
-                    Ubicación del Contrato
-                </x-base.form-label>
-                <x-base.tom-select
-                                    class="w-full"
-                                    data-placeholder="Buscar"
-                                    id="modal_select_contrato"
-                                >
-                                <option disabled selected>Elija una opción</option>
-                                @foreach($ubicaciones_contratos as $row)
-                                    <option value="{{$row->id}}">{{$row->nombre}}</option>
-                                @endforeach
-                                </x-base.tom-select>
-            </div>
-            <div id="div_modal_fecha_inicio_contrato" class="col-span-12 md:col-span-12 lg:col-span-6">
-                <x-base.form-label class="font-extrabold" for="modal_fecha_inicio_contrato">
-                    Fecha de Inicio
-                </x-base.form-label>
-                <x-base.form-input id="modal_fecha_inicio_contrato" type="date"/>
-            </div>
-            <div id="div_modal_fecha_finalizacion_contrato" class="col-span-12 md:col-span-12 lg:col-span-6">
-                <x-base.form-label class="font-extrabold" for="modal_fecha_finalizacion_contrato">
-                    Fecha de Finalización
-                </x-base.form-label>
-                <x-base.form-input id="modal_fecha_finalizacion_contrato" type="date"/>
-            </div>
-            <div class="col-span-12 md:col-span-12 lg:col-span-6">
-                <x-base.form-label class="font-extrabold" for="modal_fileInput_cirriculum">
-                        Cargar Cirriculum
+            
+                <div class="col-span-12 md:col-span-12 lg:col-span-6">
+                    <x-base.form-label class="font-extrabold" for="modal_input_primer_nombre">
+                        Primer Nombre
                     </x-base.form-label>
-                    <input type="file" id="modal_fileInput_cirriculum" name="profile_picture" accept="application/pdf" required class="mb-4">
-            </div>
-            <div class="col-span-12 md:col-span-12 lg:col-span-6">
-                <x-base.form-label class="font-extrabold" for="modal_fileInput_contrato">
-                        Cargar Contrato&nbsp;&nbsp;
+                    <x-base.form-input name="primer_nombre" id="modal_input_primer_nombre" type="text" placeholder="Escriba el Primer Nombre" />
+                </div>
+                <div class="col-span-12 md:col-span-12 lg:col-span-6">
+                    <x-base.form-label class="font-extrabold" for="modal_input_segundo_nombre">
+                        Segundo Nombre
                     </x-base.form-label>
-                    <input type="file" id="modal_fileInput_contrato" name="profile_picture" accept="application/pdf" required class="mb-4">
-            </div>
+                    <x-base.form-input name="segundo_nombre" id="modal_input_segundo_nombre" type="text" placeholder="Escriba el Segundo Nombre" />
+                </div>
+                <div class="col-span-12 md:col-span-12 lg:col-span-6">
+                    <x-base.form-label class="font-extrabold" for="modal_input_primer_apellido">
+                        Primer Apellido
+                    </x-base.form-label>
+                    <x-base.form-input name="primer_apellido" id="modal_input_primer_apellido" type="text" placeholder="Escriba el Primer Apellido" />
+                </div>
+                <div class="col-span-12 md:col-span-12 lg:col-span-6">
+                    <x-base.form-label class="font-extrabold" for="modal_input_segundo_apellido">
+                        Segundo Apellido
+                    </x-base.form-label>
+                    <x-base.form-input name="segundo_apellido" id="modal_input_segundo_apellido" type="text" placeholder="Escriba el Segundo Apellido" />
+                </div>
+                <div class="col-span-12 md:col-span-12 lg:col-span-4">
+                    <x-base.form-label class="font-extrabold" for="modal_input_telefono">
+                        Teléfono
+                    </x-base.form-label>
+                    <x-base.form-input name="telefono" id="modal_input_telefono" type="number" placeholder="Escriba el Teléfono" />
+                </div>
+                <div class="col-span-12 md:col-span-12 lg:col-span-4">
+                    <x-base.form-label class="font-extrabold" for="modal_input_identidad">
+                        Identidad
+                    </x-base.form-label>
+                    <x-base.form-input name="identidad" id="modal_input_identidad" type="number" placeholder="Escriba la Identidad" />
+                </div>
+                <div class="col-span-12 md:col-span-12 lg:col-span-4">
+                    <x-base.form-label class="font-extrabold" for="modal_input_numero_poliza">
+                    <x-base.form-check class="mr-2">
+                                        <x-base.form-check.input
+                                            id="modal_checkbox_poliza"
+                                            type="checkbox"
+                                            name="check_seguro_vida"
+                                        />
+                                        <x-base.form-check.label for="modal_checkbox_poliza">
+                                            Aplica Seguro de Vida
+                                        </x-base.form-check.label>
+                                    </x-base.form-check>
+                    </x-base.form-label>
+                    <x-base.form-input name="numero_poliza" disabled id="modal_input_numero_poliza" type="number" placeholder="Escriba el Número de Póliza" />
+                </div>
+                <div class="col-span-12 md:col-span-12 lg:col-span-2">
+                    <x-base.form-label class="font-extrabold" for="modal_select_tipo_sangre">
+                        Tipo de Sangre
+                    </x-base.form-label>
+                    <x-base.form-select name="tipo_sangre" id="modal_select_tipo_sangre" class="w-full">
+                        @foreach($tipo_sangre as $row)
+                            <option value="{{$row->id}}">{{$row->nombre}}</option>
+                        @endforeach
+                    </x-base.form-select>
+                </div>
+                <div class="col-span-12 md:col-span-12 lg:col-span-2">
+                    <x-base.form-label class="font-extrabold" for="modal_select_talla_camisa">
+                        Talla de Camisa
+                    </x-base.form-label>
+                    <x-base.form-select id="modal_select_talla_camisa" class="w-full">
+                        @foreach($tallas_camisas as $row)
+                            <option value="{{$row->id}}">{{$row->nombre}}</option>
+                        @endforeach
+                    </x-base.form-select>
+                </div>
+                <div class="col-span-12 md:col-span-12 lg:col-span-2">
+                    <x-base.form-label class="font-extrabold" for="modal_select_talla_pantalon">
+                        Talla de Pantalón
+                    </x-base.form-label>
+                    <x-base.form-select id="modal_select_talla_pantalon" class="w-full">
+                        @foreach($tallas_pantalones as $row)
+                            <option value="{{$row->id}}">{{$row->nombre}}</option>
+                        @endforeach
+                    </x-base.form-select>
+                </div>
+                <div class="col-span-12 md:col-span-12 lg:col-span-6">
+                <x-base.form-label class="font-extrabold">
+                        Marque las opciones que aplica el empleado
+                    </x-base.form-label>
+                <div class="mt-2 flex flex-col sm:flex-row">
+                                    <x-base.form-check class="mr-2">
+                                        <x-base.form-check.input
+                                            id="modal_checkbox_seguro_social"
+                                            type="checkbox"
+                                            value=""
+                                        />
+                                        <x-base.form-check.label for="modal_checkbox_seguro_social">
+                                            Seguro Social
+                                        </x-base.form-check.label>
+                                    </x-base.form-check>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <x-base.form-check class="mt-2 mr-2 sm:mt-0">
+                                        <x-base.form-check.input
+                                            id="modal_checkbox_rap"
+                                            type="checkbox"
+                                            value=""
+                                        />
+                                        <x-base.form-check.label for="modal_checkbox_rap">
+                                            RAP
+                                        </x-base.form-check.label>
+                                    </x-base.form-check>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <x-base.form-check class="mt-2 mr-2 sm:mt-0">
+                                        <x-base.form-check.input
+                                            id="modal_checkbox_canon"
+                                            type="checkbox"
+                                            value=""
+                                        />
+                                        <x-base.form-check.label for="modal_checkbox_canon">
+                                            CANON
+                                        </x-base.form-check.label>
+                                    </x-base.form-check>
+                                </div>
+                </div>
+                <div class="col-span-12 md:col-span-12 lg:col-span-2">
+                    <x-base.form-label class="font-extrabold" for="modal_select_estado_civil">
+                        Estado Civil
+                    </x-base.form-label>
+                    <x-base.form-select id="modal_select_estado_civil" class="w-full">
+                        @foreach($estado_civil as $row)
+                            <option value="{{$row->id}}">{{$row->nombre}}</option>
+                        @endforeach
+                    </x-base.form-select>
+                </div>
+                <div class="col-span-12 md:col-span-12 lg:col-span-6">
+                    <x-base.form-label class="font-extrabold" for="modal_input_nombre_conyugue">
+                        Nombre Completo del Conyugue
+                    </x-base.form-label>
+                    <x-base.form-input id="modal_input_nombre_conyugue" type="text" placeholder="Escriba el Nombre del Conyugue" />
+                </div>
+                <div class="col-span-12 md:col-span-12 lg:col-span-4">
+                    <x-base.form-label class="font-extrabold" for="modal_input_identidad_conyugue">
+                        Número de dentidad del Conyugue
+                    </x-base.form-label>
+                    <x-base.form-input id="modal_input_identidad_conyugue" type="number" placeholder="Escriba la Identidad del Conyugue" />
+                </div>
+                <div class="col-span-12 md:col-span-12 lg:col-span-12">
+                    <x-base.form-label class="font-extrabold" for="modal_input_domicilio">
+                        Domicilio y Ubicación de Casa
+                    </x-base.form-label>
+                    <x-base.form-textarea rows="5" id="modal_input_domicilio" placeholder="Escriba la dirección exacta."></x-base.form-textarea>
+                    <div id="map"></div>
+                    <!-- <p>Coordenadas: <span id="coords">N/A</span></p> -->
+                </div>
+                <div class="col-span-12 md:col-span-12 lg:col-span-12">
+                    <hr>
+                </div>
+                <div id="div_modal_select_contrato" class="col-span-12 md:col-span-12 lg:col-span-6">
+                    <x-base.form-label class="font-extrabold" for="modal_select_contrato">
+                        Contrato Actual
+                    </x-base.form-label>
+                    <x-base.tom-select
+                                        class="w-full"
+                                        data-placeholder="Buscar"
+                                        id="modal_select_contrato"
+                                    >
+                                    <option disabled selected>Elija una opción</option>
+                                    @foreach($contratos as $row)
+                                        <option data-valueId="{{$row->id}}" data-valueMeses="{{$row->meses}}">{{$row->contrato}}</option>
+                                    @endforeach
+                                    </x-base.tom-select>
+                </div>
+                <div id="div_modal_select_contrato" class="col-span-12 md:col-span-12 lg:col-span-6">
+                    <x-base.form-label class="font-extrabold" for="modal_select_contrato">
+                        Ubicación del Contrato
+                    </x-base.form-label>
+                    <x-base.tom-select
+                                        class="w-full"
+                                        data-placeholder="Buscar"
+                                        id="modal_select_contrato"
+                                    >
+                                    <option disabled selected>Elija una opción</option>
+                                    @foreach($ubicaciones_contratos as $row)
+                                        <option value="{{$row->id}}">{{$row->nombre}}</option>
+                                    @endforeach
+                                    </x-base.tom-select>
+                </div>
+                <div id="div_modal_fecha_inicio_contrato" class="col-span-12 md:col-span-12 lg:col-span-6">
+                    <x-base.form-label class="font-extrabold" for="modal_fecha_inicio_contrato">
+                        Fecha de Inicio
+                    </x-base.form-label>
+                    <x-base.form-input id="modal_fecha_inicio_contrato" type="date"/>
+                </div>
+                <div id="div_modal_fecha_finalizacion_contrato" class="col-span-12 md:col-span-12 lg:col-span-6">
+                    <x-base.form-label class="font-extrabold" for="modal_fecha_finalizacion_contrato">
+                        Fecha de Finalización
+                    </x-base.form-label>
+                    <x-base.form-input id="modal_fecha_finalizacion_contrato" type="date"/>
+                </div>
+                <div class="col-span-12 md:col-span-12 lg:col-span-6">
+                    <x-base.form-label class="font-extrabold" for="modal_fileInput_cirriculum">
+                            Cargar Cirriculum
+                        </x-base.form-label>
+                        <input type="file" id="modal_fileInput_cirriculum" name="profile_picture" accept="application/pdf" required class="mb-4">
+                </div>
+                <div class="col-span-12 md:col-span-12 lg:col-span-6">
+                    <x-base.form-label class="font-extrabold" for="modal_fileInput_contrato">
+                            Cargar Contrato&nbsp;&nbsp;
+                        </x-base.form-label>
+                        <input type="file" id="modal_fileInput_contrato" name="profile_picture" accept="application/pdf" required class="mb-4">
+                </div>
+            
         </x-base.dialog.description>
         <x-base.dialog.footer class="bg-dark">
             <x-base.button size="sm" class="mr-1 w-20" data-tw-dismiss="modal" type="button" variant="danger">
                 Cancelar
             </x-base.button>
-            <x-base.button size="sm" class="w-20" type="button" variant="primary" id="modal_btn_guardar_empleados">
+            <!-- <x-base.button size="sm" class="w-20" type="button" variant="primary" id="modal_btn_guardar_empleados">
+                Guardar
+            </x-base.button> -->
+            <x-base.button size="sm" class="w-20" type="submit" variant="primary">
                 Guardar
             </x-base.button>
         </x-base.dialog.footer>
     </x-base.dialog.panel>
+    </form>
 </x-base.dialog>
 <!-- END: Modal Content -->
 
