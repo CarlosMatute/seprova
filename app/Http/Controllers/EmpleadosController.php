@@ -259,6 +259,11 @@ class EmpleadosController extends Controller
                     // }
         
                 }
+                return Redirect::back()->withHeaders([
+                    'Cache-Control' => 'no-cache, no-store, must-revalidate',
+                    'Pragma' => 'no-cache',
+                    'Expires' => '0',
+                ]);
             }else if ($accion == 2) {
                 //throw new exception($ubicacion_casa, true);
                 DB::select("UPDATE PUBLIC.EMPLEADOS
