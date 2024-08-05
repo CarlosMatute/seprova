@@ -188,7 +188,7 @@
                                 </a>
         </x-base.dialog.title>
         <x-base.dialog.description class="grid grid-cols-12 gap-4 gap-y-3">
-            
+                <input type="hidden" name="accion" id="accion"/>
                 <div class="col-span-12 md:col-span-12 lg:col-span-6">
                     <x-base.form-label class="font-extrabold" for="modal_input_primer_nombre">
                         Primer Nombre
@@ -388,13 +388,13 @@
                     <x-base.form-label class="font-extrabold" for="modal_fileInput_cirriculum">
                             Cargar Cirriculum
                         </x-base.form-label>
-                        <input type="file" id="modal_fileInput_cirriculum" name="profile_picture" accept="application/pdf" required class="mb-4">
+                        <input type="file" id="modal_fileInput_cirriculum" name="curriculum" accept="application/pdf" required class="mb-4">
                 </div>
                 <div class="col-span-12 md:col-span-12 lg:col-span-6">
                     <x-base.form-label class="font-extrabold" for="modal_fileInput_contrato">
                             Cargar Contrato&nbsp;&nbsp;
                         </x-base.form-label>
-                        <input type="file" id="modal_fileInput_contrato" name="profile_picture" accept="application/pdf" required class="mb-4">
+                        <input type="file" id="modal_fileInput_contrato" name="contrato" accept="application/pdf" required class="mb-4">
                 </div>
             
         </x-base.dialog.description>
@@ -703,6 +703,7 @@
                 
                 
                 accion = 1;
+                $('#accion').val(accion);
                 const el = document.querySelector("#modal_nuevo_empleado");
                 const modal = tailwind.Modal.getOrCreateInstance(el);
                 modal.show();

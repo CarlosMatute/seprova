@@ -162,7 +162,7 @@ class EmpleadosController extends Controller
         $msgError = null;
         $msgSuccess = null;
         //return redirect()->back();
-        dd($check_seguro_vida);
+        //dd($check_seguro_vida);
         if ($id == null && $accion == 2) {
             $accion = 1;
         }
@@ -231,6 +231,33 @@ class EmpleadosController extends Controller
                         ["id" => $id, "id_contrato" => $id_contrato,
                         "fecha_inicio_contrato" => $fecha_inicio_contrato,
                         "fecha_finalizacion_contrato" => $fecha_finalizacion_contrato]);
+                }
+
+                if($request->hasFile("curriculum")){
+                    //dd("NO ES UNA IMAGEN");
+                    $file=$request->file("curriculum");
+                    
+                    // $nombre = "examen_".time().".".$file->guessExtension();
+                    $nombre_archivo_curriculum = "curriculum_empleado_".$id.".".$file->guessExtension();
+        
+                    $ruta = public_path("documentos\\curriculums\\".$nombre_archivo_curriculum);
+                    //$ruta = $request->file('profile_picture')->store('build/assets/img_empleados', 'public');
+                    //$ruta = "/home/shfnuaro/public_html/pdf/examenes_laboratorio/".$nombre_archivo;
+        
+                    // if($file->guessExtension()=="jpeg"){
+                    copy($file, $ruta);
+                                
+                        // DB::select("UPDATE PUBLIC.EMPLEADOS
+                        //     SET
+                        //         FOTO = :nombre_archivo,
+                        //         UPDATED_AT = NOW()
+                        //     WHERE
+                        //         ID = :id_empleado;
+                        // ", ["id_empleado" => $id_empleado, "nombre_archivo" => $nombre_archivo]);
+                    // }else{
+                    //     dd("NO ES UNA IMAGEN");
+                    // }
+        
                 }
             }else if ($accion == 2) {
                 //throw new exception($ubicacion_casa, true);
