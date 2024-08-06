@@ -148,9 +148,9 @@ class EmpleadosController extends Controller
         $tipo_sangre = $request->tipo_sangre;
         $talla_camisa = $request->talla_camisa;
         $talla_pantalon = $request->talla_pantalon;
-        $check_seguro_social = ($request->check_seguro_social == 'true') ? 1 : 2;
-        $check_rap =  ($request->check_rap == 'true') ? 1 : 2;
-        $check_canon = ($request->check_canon == 'true') ? 1 : 2;
+        $check_seguro_social = ($request->check_seguro_social == '1') ? 1 : 2;
+        $check_rap =  ($request->check_rap == '1') ? 1 : 2;
+        $check_canon = ($request->check_canon == '1') ? 1 : 2;
         $estado_civil = $request->estado_civil;
         $nombre_conyugue = $request->nombre_conyugue;
         $domicilio = $request->domicilio;
@@ -368,7 +368,7 @@ class EmpleadosController extends Controller
             $estatus = false;
             $msgError = $e->getMessage();
         }
-        if($accion == 1){   
+        if($accion == 1 || $accion == 2){   
             return Redirect::back()->withHeaders([
                 'Cache-Control' => 'no-cache, no-store, must-revalidate',
                 'Pragma' => 'no-cache',

@@ -189,6 +189,7 @@
         </x-base.dialog.title>
         <x-base.dialog.description class="grid grid-cols-12 gap-4 gap-y-3">
                 <input type="hidden" name="accion" id="accion"/>
+                <input type="hidden" name="id" id="id"/>
                 <div class="col-span-12 md:col-span-12 lg:col-span-6">
                     <x-base.form-label class="font-extrabold" for="modal_input_primer_nombre">
                         Primer Nombre
@@ -279,7 +280,7 @@
                                         <x-base.form-check.input
                                             id="modal_checkbox_seguro_social"
                                             type="checkbox"
-                                            value=""
+                                            value="1"
                                             name="check_seguro_social"
                                         />
                                         <x-base.form-check.label for="modal_checkbox_seguro_social">
@@ -291,7 +292,7 @@
                                         <x-base.form-check.input
                                             id="modal_checkbox_rap"
                                             type="checkbox"
-                                            value=""
+                                            value="1"
                                             name="check_rap"
                                         />
                                         <x-base.form-check.label for="modal_checkbox_rap">
@@ -303,7 +304,7 @@
                                         <x-base.form-check.input
                                             id="modal_checkbox_canon"
                                             type="checkbox"
-                                            value=""
+                                            value="1"
                                             name="check_canon"
                                         />
                                         <x-base.form-check.label for="modal_checkbox_canon">
@@ -362,14 +363,15 @@
                                     @endforeach
                                     </x-base.tom-select>
                 </div>
-                <div id="div_modal_select_contrato" class="col-span-12 md:col-span-12 lg:col-span-6">
-                    <x-base.form-label class="font-extrabold" for="modal_select_contrato">
+                <div id="div_modal_select_ubicacion_contrato" class="col-span-12 md:col-span-12 lg:col-span-6">
+                    <x-base.form-label class="font-extrabold" for="modal_select_ubicacion_contrato">
                         Ubicación del Contrato
                     </x-base.form-label>
                     <x-base.tom-select
                                         class="w-full"
                                         data-placeholder="Buscar"
-                                        id="modal_select_contrato"
+                                        id="modal_select_ubicacion_contrato"
+                                        name="ubicacion_contrato"
                                     >
                                     <option disabled selected>Elija una opción</option>
                                     @foreach($ubicaciones_contratos as $row)
@@ -389,17 +391,17 @@
                     </x-base.form-label>
                     <x-base.form-input id="modal_fecha_finalizacion_contrato" type="date"/>
                 </div>
-                <div class="col-span-12 md:col-span-12 lg:col-span-6">
-                    <x-base.form-label class="font-extrabold" for="modal_fileInput_cirriculum">
-                            Cargar Cirriculum
+                <div id="div_modal_fileInput_curriculum" class="col-span-12 md:col-span-12 lg:col-span-6">
+                    <x-base.form-label class="font-extrabold" for="modal_fileInput_curriculum">
+                            Cargar Curriculum
                         </x-base.form-label>
-                        <input type="file" id="modal_fileInput_cirriculum" name="curriculum" accept="application/pdf" required class="mb-4">
+                        <input type="file" id="modal_fileInput_curriculum" name="curriculum" accept="application/pdf" class="mb-4">
                 </div>
-                <div class="col-span-12 md:col-span-12 lg:col-span-6">
+                <div id="div_modal_fileInput_contrato" class="col-span-12 md:col-span-12 lg:col-span-6">
                     <x-base.form-label class="font-extrabold" for="modal_fileInput_contrato">
                             Cargar Contrato&nbsp;&nbsp;
                         </x-base.form-label>
-                        <input type="file" id="modal_fileInput_contrato" name="contrato" accept="application/pdf" required class="mb-4">
+                        <input type="file" id="modal_fileInput_contrato" name="contrato" accept="application/pdf" class="mb-4">
                 </div>
             
         </x-base.dialog.description>
@@ -586,7 +588,9 @@
             $('#sdatatable tbody').on('click', '.editar', function() {
                 map.setView([15.199999, -86.241905], 6);
                 accion = 2;
+                $('#accion').val(accion);
                 id = $(this).data('id');
+                $('#id').val(id);
                 primer_nombre = $(this).data('primer_nombre');
                 segundo_nombre = $(this).data('segundo_nombre');
                 primer_apellido = $(this).data('primer_apellido');
@@ -650,7 +654,10 @@
                 $("#modal_input_domicilio").val(domicilio);
                 $('#div_modal_select_contrato').hide();
                 $('#div_modal_fecha_inicio_contrato').hide();
+                $('#div_modal_select_ubicacion_contrato').hide();
                 $('#div_modal_fecha_finalizacion_contrato').hide();
+                $('#div_modal_fileInput_curriculum').hide();
+                $('#div_modal_fileInput_contrato').hide();
                 //console.log(ubicacion_casa);
                 if (marker) {
                     marker.setLatLng(ubicacion_casa);
@@ -706,7 +713,10 @@
                 $('#modal_fecha_finalizacion_contrato').prop('disabled', true);
                 $('#div_modal_select_contrato').show();
                 $('#div_modal_fecha_inicio_contrato').show();
+                $('#div_modal_select_ubicacion_contrato').show();
                 $('#div_modal_fecha_finalizacion_contrato').show();
+                $('#div_modal_fileInput_curriculum').show();
+                $('#div_modal_fileInput_contrato').show();
                 
                 
                 accion = 1;
