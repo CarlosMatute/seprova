@@ -162,7 +162,7 @@ class EmpleadosController extends Controller
         $msgError = null;
         $msgSuccess = null;
         //return redirect()->back();
-        //dd($check_seguro_vida);
+        dd($request->all());
         if ($id == null && $accion == 2) {
             $accion = 1;
         }
@@ -233,37 +233,33 @@ class EmpleadosController extends Controller
                         "fecha_finalizacion_contrato" => $fecha_finalizacion_contrato]);
                 }
 
-                if($request->hasFile("curriculum")){
+                if($request->hasFile("curriculum") && $request->hasFile("contrato")){
                     //dd("NO ES UNA IMAGEN");
-                    $file=$request->file("curriculum");
+                    $file_curriculum=$request->file("curriculum");
+                    $file_contrato=$request->file("contrato");
                     
                     // $nombre = "examen_".time().".".$file->guessExtension();
-                    $nombre_archivo_curriculum = "curriculum_empleado_".$id.".".$file->guessExtension();
-        
-                    $ruta = public_path("documentos\\curriculums\\".$nombre_archivo_curriculum);
+                    $nombre_archivo_curriculum = "curriculum_empleado_".$id.".".$file_curriculum->guessExtension();
+                    $nombre_archivo_contrato = "contrato_empleado_".$id.".".$file_contrato->guessExtension();
+                    
+                    $ruta_curriculum = public_path("documentos\\curriculums\\".$nombre_archivo_curriculum);
+                    $ruta_contrato = public_path("documentos\\contratos\\".$nombre_archivo_contrato);
                     //$ruta = $request->file('profile_picture')->store('build/assets/img_empleados', 'public');
                     //$ruta = "/home/shfnuaro/public_html/pdf/examenes_laboratorio/".$nombre_archivo;
-        
-                    // if($file->guessExtension()=="jpeg"){
-                    copy($file, $ruta);
-                                
-                        // DB::select("UPDATE PUBLIC.EMPLEADOS
-                        //     SET
-                        //         FOTO = :nombre_archivo,
-                        //         UPDATED_AT = NOW()
-                        //     WHERE
-                        //         ID = :id_empleado;
-                        // ", ["id_empleado" => $id_empleado, "nombre_archivo" => $nombre_archivo]);
-                    // }else{
-                    //     dd("NO ES UNA IMAGEN");
-                    // }
-        
+                    
+                    copy($file_curriculum, $ruta_curriculum);
+                    copy($file_contrato, $ruta_contrato);        
+                    DB::select("UPDATE EMPLEADOS
+                            SET
+                                CURRICULUM = :nombre_archivo_curriculum,
+                                CONTRATO = :nombre_archivo_contrato
+                            WHERE
+                                ID = :id_empleado
+                            RETURNING id
+                        ", ["id_empleado" => $id, 
+                            "nombre_archivo_curriculum" => $nombre_archivo_curriculum,
+                            "nombre_archivo_contrato" => $nombre_archivo_contrato]);
                 }
-                return Redirect::back()->withHeaders([
-                    'Cache-Control' => 'no-cache, no-store, must-revalidate',
-                    'Pragma' => 'no-cache',
-                    'Expires' => '0',
-                ]);
             }else if ($accion == 2) {
                 //throw new exception($ubicacion_casa, true);
                 DB::select("UPDATE PUBLIC.EMPLEADOS
@@ -372,7 +368,16 @@ class EmpleadosController extends Controller
             $estatus = false;
             $msgError = $e->getMessage();
         }
-        return response()->json(["msgSuccess"=>$msgSuccess,"msgError"=>$msgError, "empleados_list"=>$empleados_list]);
+        if($accion == 1){   
+            return Redirect::back()->withHeaders([
+                'Cache-Control' => 'no-cache, no-store, must-revalidate',
+                'Pragma' => 'no-cache',
+                'Expires' => '0',
+            ]);
+        }else{
+            return response()->json(["msgSuccess"=>$msgSuccess,"msgError"=>$msgError, "empleados_list"=>$empleados_list]);
+        }
+        
     }
 
     public function expediente_empleados($id_empleado){

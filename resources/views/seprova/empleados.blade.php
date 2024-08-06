@@ -254,7 +254,7 @@
                     <x-base.form-label class="font-extrabold" for="modal_select_talla_camisa">
                         Talla de Camisa
                     </x-base.form-label>
-                    <x-base.form-select id="modal_select_talla_camisa" class="w-full">
+                    <x-base.form-select id="modal_select_talla_camisa" name="talla_camisa" class="w-full">
                         @foreach($tallas_camisas as $row)
                             <option value="{{$row->id}}">{{$row->nombre}}</option>
                         @endforeach
@@ -264,7 +264,7 @@
                     <x-base.form-label class="font-extrabold" for="modal_select_talla_pantalon">
                         Talla de Pantalón
                     </x-base.form-label>
-                    <x-base.form-select id="modal_select_talla_pantalon" class="w-full">
+                    <x-base.form-select id="modal_select_talla_pantalon" name="talla_pantalon" class="w-full">
                         @foreach($tallas_pantalones as $row)
                             <option value="{{$row->id}}">{{$row->nombre}}</option>
                         @endforeach
@@ -280,6 +280,7 @@
                                             id="modal_checkbox_seguro_social"
                                             type="checkbox"
                                             value=""
+                                            name="check_seguro_social"
                                         />
                                         <x-base.form-check.label for="modal_checkbox_seguro_social">
                                             Seguro Social
@@ -291,6 +292,7 @@
                                             id="modal_checkbox_rap"
                                             type="checkbox"
                                             value=""
+                                            name="check_rap"
                                         />
                                         <x-base.form-check.label for="modal_checkbox_rap">
                                             RAP
@@ -302,6 +304,7 @@
                                             id="modal_checkbox_canon"
                                             type="checkbox"
                                             value=""
+                                            name="check_canon"
                                         />
                                         <x-base.form-check.label for="modal_checkbox_canon">
                                             CANON
@@ -313,7 +316,7 @@
                     <x-base.form-label class="font-extrabold" for="modal_select_estado_civil">
                         Estado Civil
                     </x-base.form-label>
-                    <x-base.form-select id="modal_select_estado_civil" class="w-full">
+                    <x-base.form-select name="estado_civil" id="modal_select_estado_civil" class="w-full">
                         @foreach($estado_civil as $row)
                             <option value="{{$row->id}}">{{$row->nombre}}</option>
                         @endforeach
@@ -323,7 +326,7 @@
                     <x-base.form-label class="font-extrabold" for="modal_input_nombre_conyugue">
                         Nombre Completo del Conyugue
                     </x-base.form-label>
-                    <x-base.form-input id="modal_input_nombre_conyugue" type="text" placeholder="Escriba el Nombre del Conyugue" />
+                    <x-base.form-input name="nombre_conyugue" id="modal_input_nombre_conyugue" type="text" placeholder="Escriba el Nombre del Conyugue" />
                 </div>
                 <div class="col-span-12 md:col-span-12 lg:col-span-4">
                     <x-base.form-label class="font-extrabold" for="modal_input_identidad_conyugue">
@@ -335,8 +338,9 @@
                     <x-base.form-label class="font-extrabold" for="modal_input_domicilio">
                         Domicilio y Ubicación de Casa
                     </x-base.form-label>
-                    <x-base.form-textarea rows="5" id="modal_input_domicilio" placeholder="Escriba la dirección exacta."></x-base.form-textarea>
+                    <x-base.form-textarea rows="5" id="modal_input_domicilio" name="domicilio" placeholder="Escriba la dirección exacta."></x-base.form-textarea>
                     <div id="map"></div>
+                    <input type="hidden" name="ubicacion_casa" id="ubicacion_casa"/>
                     <!-- <p>Coordenadas: <span id="coords">N/A</span></p> -->
                 </div>
                 <div class="col-span-12 md:col-span-12 lg:col-span-12">
@@ -350,10 +354,11 @@
                                         class="w-full"
                                         data-placeholder="Buscar"
                                         id="modal_select_contrato"
+                                        name="id_contrato"
                                     >
                                     <option disabled selected>Elija una opción</option>
                                     @foreach($contratos as $row)
-                                        <option data-valueId="{{$row->id}}" data-valueMeses="{{$row->meses}}">{{$row->contrato}}</option>
+                                        <option value="{{$row->id}}" data-valueId="{{$row->id}}" data-valueMeses="{{$row->meses}}">{{$row->contrato}}</option>
                                     @endforeach
                                     </x-base.tom-select>
                 </div>
@@ -564,6 +569,7 @@
 
                         ubicacion_casa = coords;
                         ubicacion_casa = '{"lat": '+ubicacion_casa.lat.toString() + ', "lng": ' + ubicacion_casa.lng.toString()+'}';
+                        $("#ubicacion_casa").val(ubicacion_casa);
                         //console.log(ubicacion_casa);
                         // Actualiza el contenido del elemento span con las coordenadas
                         //document.getElementById('coords').textContent = `Lat: ${coords.lat}, Lng: ${coords.lng}`;
@@ -652,6 +658,7 @@
                     marker = L.marker(ubicacion_casa).addTo(map);
                 }
                 ubicacion_casa = '{"lat": '+ubicacion_casa.lat.toString() + ', "lng": ' + ubicacion_casa.lng.toString()+'}';
+                $("#ubicacion_casa").val(ubicacion_casa);
                 const el = document.querySelector("#modal_nuevo_empleado");
                 const modal = tailwind.Modal.getOrCreateInstance(el);
                 modal.show();
