@@ -52,7 +52,6 @@
                     <th>Salario</th>
                     <th>Liquidación</th>
                     <th>Tipo</th>
-                    <th>Ubicación</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -64,7 +63,6 @@
                         <td>{{$row->salario_formato}}</td>
                         <td>{{$row->liquidacion_formato}}</td>
                         <td>{{$row->descripcion}}</td>
-                        <td>{{$row->ubicacion}}</td>
                         <td>
                             <x-base.button
                                 class="mb-2 mr-1 editar"
@@ -76,8 +74,6 @@
                                 data-liquidacion="{{$row->liquidacion}}" 
                                 data-id_tipo_contrato="{{$row->id_tipo_contrato}}" 
                                 data-descripcion="{{$row->descripcion}}" 
-                                data-id_ubicacion_contrato="{{$row->id_ubicacion_contrato}}" 
-                                data-ubicacion="{{$row->ubicacion}}"
                             >
                                 <x-base.lucide
                                     class="h-4 w-4"
@@ -94,8 +90,6 @@
                                 data-liquidacion="{{$row->liquidacion}}" 
                                 data-id_tipo_contrato="{{$row->id_tipo_contrato}}" 
                                 data-descripcion="{{$row->descripcion}}" 
-                                data-id_ubicacion_contrato="{{$row->id_ubicacion_contrato}}" 
-                                data-ubicacion="{{$row->ubicacion}}"
                             >
                                 <x-base.lucide
                                     class="h-4 w-4"
@@ -123,23 +117,11 @@
             </h2>
         </x-base.dialog.title>
         <x-base.dialog.description class="grid grid-cols-12 gap-4 gap-y-3">
-            <div class="col-span-12 md:col-span-12 lg:col-span-12">
+            <div class="col-span-12 md:col-span-12 lg:col-span-6">
                 <x-base.form-label class="font-extrabold" for="modal_input_nombre_contrato">
                     Nombre del Contrato
                 </x-base.form-label>
                 <x-base.form-input id="modal_input_nombre_contrato" type="text" placeholder="Escriba el Nombre del Contrato" />
-            </div>
-            <div class="col-span-12 md:col-span-12 lg:col-span-6">
-                <x-base.form-label class="font-extrabold" for="modal_input_salario_contrato">
-                    Salario
-                </x-base.form-label>
-                <x-base.form-input id="modal_input_salario_contrato" type="number" placeholder="Asigne el Salario del Contrato" />
-            </div>
-            <div class="col-span-12 md:col-span-12 lg:col-span-6">
-                <x-base.form-label class="font-extrabold" for="modal_input_liquidacion_contrato">
-                    Liquidación
-                </x-base.form-label>
-                <x-base.form-input id="modal_input_liquidacion_contrato" type="number" placeholder="Asigne la Liquidación del Contrato" />
             </div>
             <div class="col-span-12 md:col-span-12 lg:col-span-6">
                 <x-base.form-label class="font-extrabold" for="modal_select_tipo_contrato">
@@ -152,14 +134,16 @@
                 </x-base.form-select>
             </div>
             <div class="col-span-12 md:col-span-12 lg:col-span-6">
-                <x-base.form-label class="font-extrabold" for="modal_select_ubicacion_contrato">
-                    Ubicación del Contrato
+                <x-base.form-label class="font-extrabold" for="modal_input_salario_contrato">
+                    Salario
                 </x-base.form-label>
-                <x-base.form-select id="modal_select_ubicacion_contrato" class="w-full">
-                    @foreach($ubicaciones as $row)
-                        <option value="{{$row->id}}">{{$row->nombre}}</option>
-                    @endforeach
-                </x-base.form-select>
+                <x-base.form-input id="modal_input_salario_contrato" type="number" placeholder="Asigne el Salario del Contrato" />
+            </div>
+            <div class="col-span-12 md:col-span-12 lg:col-span-6">
+                <x-base.form-label class="font-extrabold" for="modal_input_liquidacion_contrato">
+                    Liquidación
+                </x-base.form-label>
+                <x-base.form-input id="modal_input_liquidacion_contrato" type="number" placeholder="Asigne la Liquidación del Contrato" />
             </div>
         </x-base.dialog.description>
         <x-base.dialog.footer class="bg-dark">
@@ -304,12 +288,10 @@
                 salario_contrato = $(this).data('salario');
                 liquidacion_contrato = $(this).data('liquidacion');
                 tipo_contrato = $(this).data('id_tipo_contrato');
-                ubicacion_contrato = $(this).data('id_ubicacion_contrato');
                 $("#modal_input_nombre_contrato").val(nombre_contrato);
                 $("#modal_input_salario_contrato").val(salario_contrato);
                 $("#modal_input_liquidacion_contrato").val(liquidacion_contrato);
                 $("#modal_select_tipo_contrato").val(tipo_contrato);
-                $("#modal_select_ubicacion_contrato").val(ubicacion_contrato);
                 const el = document.querySelector("#modal_nuevo_contrato");
                 const modal = tailwind.Modal.getOrCreateInstance(el);
                 modal.show();
@@ -328,7 +310,6 @@
                 $("#modal_input_salario_contrato").val('');
                 $("#modal_input_liquidacion_contrato").val('');
                 $("#modal_select_tipo_contrato").val('');
-                $("#modal_select_ubicacion_contrato").val('');
                 accion = 1;
                 const el = document.querySelector("#modal_nuevo_contrato");
                 const modal = tailwind.Modal.getOrCreateInstance(el);
@@ -340,7 +321,6 @@
                 salario_contrato = $("#modal_input_salario_contrato").val();
                 liquidacion_contrato = $("#modal_input_liquidacion_contrato").val();
                 tipo_contrato = $("#modal_select_tipo_contrato").val();
-                ubicacion_contrato = $("#modal_select_ubicacion_contrato").val();
                 
                 if(nombre_contrato == null || nombre_contrato == ''){
                     titleMsg = 'Valor Requerido'
@@ -373,14 +353,6 @@
                     notificacion()
                     return false;
                 }
-
-                if(ubicacion_contrato == null || ubicacion_contrato == ''){
-                    titleMsg = 'Valor Requerido'
-                    textMsg = 'Debe especificar un valor para Ubicación de Contrato.';
-                    typeMsg = 'error';
-                    notificacion()
-                    return false;
-                }
                 
                 if(!accion_guardar){
                     guardar_contratos();
@@ -405,8 +377,7 @@
                         'nombre_contrato' : nombre_contrato,
                         'salario_contrato' : salario_contrato,
                         'liquidacion_contrato' : liquidacion_contrato,
-                        'tipo_contrato' : tipo_contrato,
-                        'ubicacion_contrato' : ubicacion_contrato
+                        'tipo_contrato' : tipo_contrato
                     },
                     success: function(data) {
                         if (data.msgError) {
@@ -420,16 +391,14 @@
                             if(accion != 3){
                                 var row = data.contratos_list;
                                 var nuevoFila = [
-                                    row.id, row.nombre, row.salario_formato, row.liquidacion_formato, row.descripcion, row.ubicacion,
+                                    row.id, row.nombre, row.salario_formato, row.liquidacion_formato, row.descripcion,
                                     '<button class="transition duration-200 border shadow-sm inline-flex items-center justify-center rounded-md font-medium cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus-visible:outline-none dark:focus:ring-slate-700 dark:focus:ring-opacity-50 [&amp;:hover:not(:disabled)]:bg-opacity-90 [&amp;:hover:not(:disabled)]:border-opacity-90 [&amp;:not(button)]:text-center disabled:opacity-70 disabled:cursor-not-allowed text-xs py-1.5 px-2 bg-warning border-warning text-slate-900 dark:border-warning editar mb-2 mr-1 editar"'+
                                         'data-id="'+row.id+'"'+  
                                         'data-nombre="'+row.nombre+'"'+  
                                         'data-salario="'+row.salario+'"'+  
                                         'data-liquidacion="'+row.liquidacion+'"'+  
                                         'data-id_tipo_contrato="'+row.id_tipo_contrato+'"'+ 
-                                        'data-descripcion="'+row.descripcion+'"'+ 
-                                        'data-id_ubicacion_contrato="'+row.id_ubicacion_contrato+'"'+ 
-                                        'data-ubicacion="'+row.ubicacion+'"'+ 
+                                        'data-descripcion="'+row.descripcion+'"'+
                                     '><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" icon-name="edit" data-lucide="edit" class="lucide lucide-edit stroke-1.5 h-4 w-4"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z">'+
                                     '</path></svg></button>'+
                                     '<button class="transition duration-200 border shadow-sm inline-flex items-center justify-center rounded-md font-medium cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus-visible:outline-none dark:focus:ring-slate-700 dark:focus:ring-opacity-50 [&amp;:hover:not(:disabled)]:bg-opacity-90 [&amp;:hover:not(:disabled)]:border-opacity-90 [&amp;:not(button)]:text-center disabled:opacity-70 disabled:cursor-not-allowed text-xs py-1.5 px-2 bg-danger border-danger text-white dark:border-danger eliminar mb-2 mr-1 eliminar"'+
@@ -438,9 +407,7 @@
                                         'data-salario="'+row.salario+'"'+  
                                         'data-liquidacion="'+row.liquidacion+'"'+  
                                         'data-id_tipo_contrato="'+row.id_tipo_contrato+'"'+ 
-                                        'data-descripcion="'+row.descripcion+'"'+ 
-                                        'data-id_ubicacion_contrato="'+row.id_ubicacion_contrato+'"'+ 
-                                        'data-ubicacion="'+row.ubicacion+'"'+ 
+                                        'data-descripcion="'+row.descripcion+'"'+
                                     '><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" icon-name="trash" data-lucide="trash" class="lucide lucide-trash stroke-1.5 h-4 w-4"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg></button>'
                                 ]; 
                             }

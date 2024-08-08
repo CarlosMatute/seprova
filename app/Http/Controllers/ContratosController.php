@@ -23,13 +23,13 @@ class contratosController extends Controller
                 'L.' ||TO_CHAR(CC.LIQUIDACION, 'FM999,999,999.00') LIQUIDACION_FORMATO,
                 CC.ID_TIPO_CONTRATO,
                 TP.DESCRIPCION,
-                CC.ID_UBICACION_CONTRATO,
-                UC.NOMBRE UBICACION,
+                --CC.ID_UBICACION_CONTRATO,
+                --UC.NOMBRE UBICACION,
                 CC.CREATED_AT
             FROM
                 PUBLIC.CONFIGURACIONES_CONTRATOS CC
                 JOIN TIPOS_CONTRATOS TP ON CC.ID_TIPO_CONTRATO = TP.ID
-                JOIN UBICACIONES_CONTRATOS UC ON CC.ID_UBICACION_CONTRATO = UC.ID
+                --JOIN UBICACIONES_CONTRATOS UC ON CC.ID_UBICACION_CONTRATO = UC.ID
             WHERE
                 CC.DELETED_AT IS NULL;");
 
@@ -86,17 +86,15 @@ class contratosController extends Controller
                             NOMBRE,
                             SALARIO,
                             LIQUIDACION,
-                            ID_TIPO_cONTRATO,
-                            ID_UBICACION_cONTRATO
+                            ID_TIPO_cONTRATO
                         )
                     VALUES
-                        (:nombre_contrato, :salario_contrato, :liquidacion_contrato, :tipo_contrato, :ubicacion_contrato)
+                        (:nombre_contrato, :salario_contrato, :liquidacion_contrato, :tipo_contrato)
                         returning id;",
                     ["nombre_contrato" => $nombre_contrato,
                     "salario_contrato" => $salario_contrato,
                     "liquidacion_contrato" => $liquidacion_contrato,
-                    "tipo_contrato" => $tipo_contrato,
-                    "ubicacion_contrato" => $ubicacion_contrato]))->first();
+                    "tipo_contrato" => $tipo_contrato]))->first();
                 
                 $msgSuccess = "contrato '".$contrato->id."' Guardado Exitosamente.";
                 $id = $contrato->id;
@@ -108,7 +106,6 @@ class contratosController extends Controller
                             SALARIO = :salario_contrato,
                             LIQUIDACION = :liquidacion_contrato,
                             ID_TIPO_CONTRATO = :tipo_contrato,
-                            ID_UBICACION_CONTRATO = :ubicacion_contrato,
                             UPDATED_AT = NOW()
                         WHERE
                             ID = :id;",
@@ -116,8 +113,7 @@ class contratosController extends Controller
                     "nombre_contrato" => $nombre_contrato,
                     "salario_contrato" => $salario_contrato,
                     "liquidacion_contrato" => $liquidacion_contrato,
-                    "tipo_contrato" => $tipo_contrato,
-                    "ubicacion_contrato" => $ubicacion_contrato]);
+                    "tipo_contrato" => $tipo_contrato]);
                 $estatus = true;
                 $msgSuccess = "Contrato " . $id . " Actualizado Exitosamente.";
             }else if ($accion == 3) {
@@ -141,13 +137,11 @@ class contratosController extends Controller
                             'L.' ||TO_CHAR(CC.LIQUIDACION, 'FM999,999,999.00') LIQUIDACION_FORMATO,
                             CC.ID_TIPO_cONTRATO,
                             TP.DESCRIPCION,
-                            CC.ID_UBICACION_CONTRATO,
-                            UC.NOMBRE UBICACION,
                             CC.CREATED_AT
                         FROM
                             PUBLIC.CONFIGURACIONES_CONTRATOS CC
                             JOIN TIPOS_CONTRATOS TP ON CC.ID_TIPO_CONTRATO = TP.ID
-                            JOIN UBICACIONES_CONTRATOS UC ON CC.ID_UBICACION_CONTRATO = UC.ID
+                            --JOIN UBICACIONES_CONTRATOS UC ON CC.ID_UBICACION_CONTRATO = UC.ID
                         WHERE
                             CC.DELETED_AT IS NULL
                         AND CC.ID = :id;", ["id" => $id]))->first();

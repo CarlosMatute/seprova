@@ -333,7 +333,7 @@
                     <x-base.form-label class="font-extrabold" for="modal_input_identidad_conyugue">
                         Número de dentidad del Conyugue
                     </x-base.form-label>
-                    <x-base.form-input id="modal_input_identidad_conyugue" type="number" placeholder="Escriba la Identidad del Conyugue" />
+                    <x-base.form-input name="identidad_conyugue" id="modal_input_identidad_conyugue" type="number" placeholder="Escriba la Identidad del Conyugue" />
                 </div>
                 <div class="col-span-12 md:col-span-12 lg:col-span-12">
                     <x-base.form-label class="font-extrabold" for="modal_input_domicilio">
@@ -383,13 +383,13 @@
                     <x-base.form-label class="font-extrabold" for="modal_fecha_inicio_contrato">
                         Fecha de Inicio
                     </x-base.form-label>
-                    <x-base.form-input id="modal_fecha_inicio_contrato" type="date"/>
+                    <x-base.form-input name="fecha_inicio_contrato" id="modal_fecha_inicio_contrato" type="date"/>
                 </div>
                 <div id="div_modal_fecha_finalizacion_contrato" class="col-span-12 md:col-span-12 lg:col-span-6">
                     <x-base.form-label class="font-extrabold" for="modal_fecha_finalizacion_contrato">
                         Fecha de Finalización
                     </x-base.form-label>
-                    <x-base.form-input id="modal_fecha_finalizacion_contrato" type="date"/>
+                    <x-base.form-input name="fecha_finalizacion_contrato" id="modal_fecha_finalizacion_contrato" type="date"/>
                 </div>
                 <div id="div_modal_fileInput_curriculum" class="col-span-12 md:col-span-12 lg:col-span-6">
                     <x-base.form-label class="font-extrabold" for="modal_fileInput_curriculum">

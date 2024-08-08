@@ -153,16 +153,18 @@ class EmpleadosController extends Controller
         $check_canon = ($request->check_canon == '1') ? 1 : 2;
         $estado_civil = $request->estado_civil;
         $nombre_conyugue = $request->nombre_conyugue;
+        $identidad_conyugue = $request->identidad_conyugue;
         $domicilio = $request->domicilio;
         $ubicacion_casa = $request->ubicacion_casa;
         $id_contrato = $request->id_contrato;
+        $ubicacion_contrato = $request->ubicacion_contrato;
         $fecha_inicio_contrato = $request->fecha_inicio_contrato;
         $fecha_finalizacion_contrato = $request->fecha_finalizacion_contrato;
         $empleados_list = null;
         $msgError = null;
         $msgSuccess = null;
         //return redirect()->back();
-        dd($request->all());
+        //dd($request->all());
         if ($id == null && $accion == 2) {
             $accion = 1;
         }
@@ -189,13 +191,14 @@ class EmpleadosController extends Controller
                                 ID_TIPO_SANGRE,
                                 NOMBRE_CONYUGUE,
                                 UBICACION_CASA,
-                                ID_ESTADO_CIVIL
+                                ID_ESTADO_CIVIL,
+                                IDENTIDAD_CONYUGUE
                             )
                         VALUES
                             (:primer_nombre, :segundo_nombre, :primer_apellido, :segundo_apellido, :identidad, 
                             :telefono, :domicilio, :numero_poliza, :check_seguro_social, :check_rap, :check_canon, 
                             :talla_camisa, :talla_pantalon, :tipo_sangre, :nombre_conyugue, :ubicacion_casa,
-                            :estado_civil)
+                            :estado_civil, :identidad_conyugue)
                     returning id;",
                     ["primer_nombre" => $primer_nombre,
                     "segundo_nombre" => $segundo_nombre,
@@ -213,25 +216,28 @@ class EmpleadosController extends Controller
                     "nombre_conyugue" => $nombre_conyugue,
                     "domicilio" => $domicilio,
                     "ubicacion_casa" => $ubicacion_casa,
-                    "estado_civil" => $estado_civil]))->first();
+                    "estado_civil" => $estado_civil,
+                    "identidad_conyugue" => $identidad_conyugue]))->first();
                 
                 $msgSuccess = "Empleado ".$empleado->id." Guardado Exitosamente.";
                 $id = $empleado->id;
                 
-                if(($id_contrato != null || $id_contrato != '') && ($fecha_inicio_contrato != null || $fecha_inicio_contrato != '')){
+                //if(($id_contrato != null || $id_contrato != '') && ($fecha_inicio_contrato != null || $fecha_inicio_contrato != '')){
                     DB::select("INSERT INTO
                         PUBLIC.EMPLEADOS_CONTRATOS (
                             ID_EMPLEADO,
                             ID_CONFIGURACION_CONTRATO,
                             FECHA_INICIO,
-                            FECHA_FINALIZACION
+                            FECHA_FINALIZACION,
+                            ID_UBICACION_CONTRATO
                         )
                     VALUES
-                        (:id, :id_contrato, :fecha_inicio_contrato, :fecha_finalizacion_contrato);", 
+                        (:id, :id_contrato, :fecha_inicio_contrato, :fecha_finalizacion_contrato, :ubicacion_contrato);", 
                         ["id" => $id, "id_contrato" => $id_contrato,
                         "fecha_inicio_contrato" => $fecha_inicio_contrato,
-                        "fecha_finalizacion_contrato" => $fecha_finalizacion_contrato]);
-                }
+                        "fecha_finalizacion_contrato" => $fecha_finalizacion_contrato,
+                        "ubicacion_contrato" => $ubicacion_contrato]);
+            //}
 
                 if($request->hasFile("curriculum") && $request->hasFile("contrato")){
                     //dd("NO ES UNA IMAGEN");
@@ -281,6 +287,7 @@ class EmpleadosController extends Controller
                             NOMBRE_CONYUGUE = :nombre_conyugue,
                             UBICACION_CASA = :ubicacion_casa,
                             ID_ESTADO_CIVIL = :estado_civil,
+                            IDENTIDAD_CONYUGUE = :identidad_conyugue,
                             UPDATED_AT = NOW()
                         WHERE
                             ID = :id;",
@@ -301,7 +308,8 @@ class EmpleadosController extends Controller
                     "nombre_conyugue" => $nombre_conyugue,
                     "domicilio" => $domicilio,
                     "ubicacion_casa" => $ubicacion_casa,
-                    "estado_civil" => $estado_civil]);
+                    "estado_civil" => $estado_civil,
+                    "identidad_conyugue" => $identidad_conyugue]);
                 $estatus = true;
                 $msgSuccess = "Empleado " . $id . " Actualizado Exitosamente.";
             }else if ($accion == 3) {
@@ -438,7 +446,7 @@ class EmpleadosController extends Controller
                     'L.' || TO_CHAR(CC.LIQUIDACION, 'FM999,999,999.00') LIQUIDACION_FORMATO,
                     CC.ID_TIPO_CONTRATO,
                     TP.DESCRIPCION,
-                    CC.ID_UBICACION_CONTRATO,
+                    EC.ID_UBICACION_CONTRATO,
                     UC.NOMBRE UBICACION,
                     EC.FECHA_INICIO,
                     EC.FECHA_FINALIZACION,
@@ -457,8 +465,8 @@ class EmpleadosController extends Controller
                 FROM
                     PUBLIC.CONFIGURACIONES_CONTRATOS CC
                     JOIN TIPOS_CONTRATOS TP ON CC.ID_TIPO_CONTRATO = TP.ID
-                    JOIN UBICACIONES_CONTRATOS UC ON CC.ID_UBICACION_CONTRATO = UC.ID
                     JOIN EMPLEADOS_CONTRATOS EC ON CC.ID = EC.ID_CONFIGURACION_CONTRATO
+                    JOIN UBICACIONES_CONTRATOS UC ON EC.ID_UBICACION_CONTRATO = UC.ID
                     AND EC.ID_EMPLEADO = :id
                 WHERE
                     CC.DELETED_AT IS NULL
