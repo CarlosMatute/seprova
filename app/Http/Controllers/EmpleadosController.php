@@ -537,6 +537,6 @@ class EmpleadosController extends Controller
             $file = public_path()."/documentos/curriculums/".$archivo;
         }
         //$file= "/home/shfnuaro/public_html/archivos/".$archivo;
-        return Response::download($file);
+        return response()->download($file);
     }
 }
