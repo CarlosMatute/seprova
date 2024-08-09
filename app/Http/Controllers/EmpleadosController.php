@@ -250,6 +250,7 @@ class EmpleadosController extends Controller
                     
                     //$ruta = $request->file('profile_picture')->store('build/assets/img_empleados', 'public');
                     //$ruta = "/home/shfnuaro/public_html/pdf/examenes_laboratorio/".$nombre_archivo;
+                    $ruta = null;
                     if(env('PRODUCCION') == 'true'){
                         $ruta_curriculum = "/home/ntbflekg/public_html/documentos/curriculums/".$nombre_archivo_curriculum;
                         $ruta_contrato = "/home/ntbflekg/public_html/documentos/contratos/".$nombre_archivo_contrato;
@@ -492,6 +493,7 @@ class EmpleadosController extends Controller
 
             //$ruta = public_path("img\\empleados\\".$nombre_archivo);
             //$ruta = $request->file('profile_picture')->store('build/assets/img_empleados', 'public');
+            $ruta = null;
             if(env('PRODUCCION') == 'true'){
                 $ruta = "/home/ntbflekg/public_html/img/empleados/".$nombre_archivo;
             }else{
