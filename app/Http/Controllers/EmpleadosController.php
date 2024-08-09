@@ -248,11 +248,15 @@ class EmpleadosController extends Controller
                     $nombre_archivo_curriculum = "curriculum_empleado_".$id.".".$file_curriculum->guessExtension();
                     $nombre_archivo_contrato = "contrato_empleado_".$id.".".$file_contrato->guessExtension();
                     
-                    $ruta_curriculum = public_path("documentos\\curriculums\\".$nombre_archivo_curriculum);
-                    $ruta_contrato = public_path("documentos\\contratos\\".$nombre_archivo_contrato);
                     //$ruta = $request->file('profile_picture')->store('build/assets/img_empleados', 'public');
                     //$ruta = "/home/shfnuaro/public_html/pdf/examenes_laboratorio/".$nombre_archivo;
-                    
+                    if(env('PRODUCCION')){
+                        $ruta_curriculum = "/home/ntbflekg/public_html/documentos/curriculums/".$nombre_archivo_curriculum;
+                        $ruta_contrato = "/home/ntbflekg/public_html/documentos/contratos/".$nombre_archivo_contrato;
+                    }else{
+                        $ruta_curriculum = public_path("documentos\\curriculums\\".$nombre_archivo_curriculum);
+                        $ruta_contrato = public_path("documentos\\contratos\\".$nombre_archivo_contrato);
+                    }
                     copy($file_curriculum, $ruta_curriculum);
                     copy($file_contrato, $ruta_contrato);        
                     DB::select("UPDATE EMPLEADOS
