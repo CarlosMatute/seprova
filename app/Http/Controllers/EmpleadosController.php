@@ -10,6 +10,7 @@ use Exception;
 use File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Response;
 
 class EmpleadosController extends Controller
 {
@@ -405,7 +406,7 @@ class EmpleadosController extends Controller
                         E.TELEFONO,
                         E.DIRECCION,
                         CASE
-                            WHEN E.POLIZA_SEGURO is not null THEN E.POLIZA_SEGURO::TEXT
+                            WHEN E.POLIZA_SEGURO IS NOT NULL THEN E.POLIZA_SEGURO::TEXT
                             ELSE 'No Aplica'
                         END POLIZA_SEGURO,
                         E.SEGURO_SOCIAL,
@@ -431,6 +432,9 @@ class EmpleadosController extends Controller
                         E.ID_TIPO_SANGRE,
                         TS.NOMBRE TIPO_SANGRE,
                         E.NOMBRE_CONYUGUE,
+                        E.IDENTIDAD_CONYUGUE,
+                        E.CURRICULUM,
+                        E.CONTRATO,
                         E.UBICACION_CASA,
                         E.CREATED_AT
                     FROM
@@ -520,5 +524,19 @@ class EmpleadosController extends Controller
             'Pragma' => 'no-cache',
             'Expires' => '0',
         ]);
+    }
+
+    public function descargar_archivo_cv($archivo){
+        //$fileName = basename('archivo_1152_1667065694.jpeg');
+        //$file="";
+        //$file= public_path(). "/archivos/".$archivo;
+        throw new exception($archivo, true);
+        if(env('PRODUCCION') == 'true'){
+            $file = "/home/ntbflekg/public_html/documentos/curriculums/".$archivo;
+        }else{
+            $file = public_path()."/documentos/curriculums/".$archivo;
+        }
+        //$file= "/home/shfnuaro/public_html/archivos/".$archivo;
+        //return Response::download($file);
     }
 }

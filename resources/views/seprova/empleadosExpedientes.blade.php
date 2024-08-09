@@ -76,13 +76,22 @@
         <div class="flex flex-col lg:flex-row justify-center lg:justify-start mt-5">
     <div class="flex flex-col md:flex-row justify-center lg:justify-start gap-4 w-full max-w-lg">
         <x-base.button
-            class="w-full md:w-44 lg:w-32"
+            class="w-full md:w-44 lg:w-44"
             href="{{ url('/empleados/') }}"
             as="a"
             variant="primary"
         >
             <x-base.lucide class="mr-2 h-6 w-6" icon="ArrowLeftCircle" />
             Regresar
+        </x-base.button>
+        <x-base.button
+            class="w-full md:w-44 lg:w-44"
+            href="{{url('/empleados/expediente/descargar_cv/')}}/{{$empleado->curriculum}}"
+            as="a"
+            variant="danger"
+        >
+            <x-base.lucide class="mr-2 h-6 w-6" icon="File" />
+            Descargar CV
         </x-base.button>
     </div>
 </div>
