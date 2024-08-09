@@ -494,6 +494,7 @@ class EmpleadosController extends Controller
             //$ruta = public_path("img\\empleados\\".$nombre_archivo);
             //$ruta = $request->file('profile_picture')->store('build/assets/img_empleados', 'public');
             $ruta = null;
+            dd(env('PRODUCCION'));
             if(env('PRODUCCION') == 'true'){
                 $ruta = "/home/ntbflekg/public_html/img/empleados/".$nombre_archivo;
             }else{
