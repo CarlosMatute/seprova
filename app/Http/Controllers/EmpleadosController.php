@@ -486,9 +486,9 @@ class EmpleadosController extends Controller
             // $nombre = "examen_".time().".".$file->guessExtension();
             $nombre_archivo = "foto_empleado_".$id_empleado.".".$file->guessExtension();
 
-            $ruta = public_path("img\\empleados\\".$nombre_archivo);
+            //$ruta = public_path("img\\empleados\\".$nombre_archivo);
             //$ruta = $request->file('profile_picture')->store('build/assets/img_empleados', 'public');
-            //$ruta = "/home/shfnuaro/public_html/pdf/examenes_laboratorio/".$nombre_archivo;
+            $ruta = "/home/ntbflekg/public_html/img/empleados/".$nombre_archivo;
 
             // if($file->guessExtension()=="jpeg"){
             copy($file, $ruta);
