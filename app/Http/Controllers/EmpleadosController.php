@@ -530,7 +530,7 @@ class EmpleadosController extends Controller
         //$fileName = basename('archivo_1152_1667065694.jpeg');
         //$file="";
         //$file= public_path(). "/archivos/".$archivo;
-        throw new exception($archivo, true);
+        //throw new exception($archivo, true);
         if(env('PRODUCCION') == 'true'){
             $file = "/home/ntbflekg/public_html/documentos/curriculums/".$archivo;
         }else{
