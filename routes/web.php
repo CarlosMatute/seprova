@@ -111,7 +111,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/empleados/guardar', [EmpleadosController::class, 'guardar_empleados']);
         Route::get('/empleados/{id_empleado}/expediente', [EmpleadosController::class, 'expediente_empleados']);
         Route::post('/empleados/foto/guardar', [EmpleadosController::class, 'guardar_fotos_empleados']);
-        Route::get('/empleados/expediente/descargar_cv/{archivo}', [EmpleadosController::class, 'descargar_archivo_cv']);
+        Route::get('/empleados/expediente/descargar_cv/{archivo}', [EmpleadosController::class, 'descargar_archivo_cv'])->withoutMiddleware('auth');
+        Route::get('/empleados/expediente/descargar_contrato/{archivo}', [EmpleadosController::class, 'descargar_archivo_contrato'])->withoutMiddleware('auth');
         Route::get('/contratos', [ContratosController::class, 'ver_contratos'])->name('contratos');
         Route::post('/contratos/guardar', [ContratosController::class, 'guardar_contratos']);
         Route::get('/clientes', [ClientesController::class, 'ver_clientes'])->name('clientes');

@@ -264,6 +264,18 @@
                                                             icon="Trash"
                                                         />
                                                     </x-base.button>
+                                                    <x-base.button
+                                                        class="mb-2 mr-1"
+                                                        variant="pending"
+                                                        size="sm"
+                                                        as="a"
+                                                        href="{{url('/empleados/expediente/descargar_contrato/')}}/{{$row->contrato_digital}}"
+                                                    >
+                                                        <x-base.lucide
+                                                            class="h-4 w-4"
+                                                            icon="FileText"
+                                                        />
+                                                    </x-base.button>
                                                 </td>
                                             </tr>
                                         @endforeach

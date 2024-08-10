@@ -161,6 +161,7 @@ class EmpleadosController extends Controller
         $ubicacion_contrato = $request->ubicacion_contrato;
         $fecha_inicio_contrato = $request->fecha_inicio_contrato;
         $fecha_finalizacion_contrato = $request->fecha_finalizacion_contrato;
+        $id_empleado_contrato = null;
         $empleados_list = null;
         $msgError = null;
         $msgSuccess = null;
@@ -224,7 +225,7 @@ class EmpleadosController extends Controller
                 $id = $empleado->id;
                 
                 //if(($id_contrato != null || $id_contrato != '') && ($fecha_inicio_contrato != null || $fecha_inicio_contrato != '')){
-                    DB::select("INSERT INTO
+                $id_empleado_contrato = collect(\DB::select("INSERT INTO
                         PUBLIC.EMPLEADOS_CONTRATOS (
                             ID_EMPLEADO,
                             ID_CONFIGURACION_CONTRATO,
@@ -233,13 +234,14 @@ class EmpleadosController extends Controller
                             ID_UBICACION_CONTRATO
                         )
                     VALUES
-                        (:id, :id_contrato, :fecha_inicio_contrato, :fecha_finalizacion_contrato, :ubicacion_contrato);", 
+                        (:id, :id_contrato, :fecha_inicio_contrato, :fecha_finalizacion_contrato, :ubicacion_contrato)
+                        returning id;", 
                         ["id" => $id, "id_contrato" => $id_contrato,
                         "fecha_inicio_contrato" => $fecha_inicio_contrato,
                         "fecha_finalizacion_contrato" => $fecha_finalizacion_contrato,
-                        "ubicacion_contrato" => $ubicacion_contrato]);
+                        "ubicacion_contrato" => $ubicacion_contrato]))->first();
             //}
-
+                //dd($id_empleado_contrato->id);
                 if($request->hasFile("curriculum") && $request->hasFile("contrato")){
                     //dd("NO ES UNA IMAGEN");
                     $file_curriculum=$request->file("curriculum");
@@ -263,13 +265,20 @@ class EmpleadosController extends Controller
                     copy($file_contrato, $ruta_contrato);        
                     DB::select("UPDATE EMPLEADOS
                             SET
-                                CURRICULUM = :nombre_archivo_curriculum,
-                                CONTRATO = :nombre_archivo_contrato
+                                CURRICULUM = :nombre_archivo_curriculum
                             WHERE
                                 ID = :id_empleado
                             RETURNING id
                         ", ["id_empleado" => $id, 
-                            "nombre_archivo_curriculum" => $nombre_archivo_curriculum,
+                            "nombre_archivo_curriculum" => $nombre_archivo_curriculum]);
+
+                    DB::select("UPDATE EMPLEADOS_CONTRATOS
+                            SET
+                                CONTRATO_DIGITAL = :nombre_archivo_contrato
+                            WHERE
+                                ID = :id_empleado_contrato
+                            RETURNING id
+                        ", ["id_empleado_contrato" => $id_empleado_contrato->id, 
                             "nombre_archivo_contrato" => $nombre_archivo_contrato]);
                 }
             }else if ($accion == 2) {
@@ -470,7 +479,8 @@ class EmpleadosController extends Controller
                             AND EC.FECHA_FINALIZACION IS NULL
                         ) THEN 'Activo'
                         ELSE NULL
-                    END ESTADO
+                    END ESTADO,
+					EC.CONTRATO_DIGITAL
                 FROM
                     PUBLIC.CONFIGURACIONES_CONTRATOS CC
                     JOIN TIPOS_CONTRATOS TP ON CC.ID_TIPO_CONTRATO = TP.ID
@@ -527,14 +537,22 @@ class EmpleadosController extends Controller
     }
 
     public function descargar_archivo_cv($archivo){
-        //$fileName = basename('archivo_1152_1667065694.jpeg');
-        //$file="";
-        //$file= public_path(). "/archivos/".$archivo;
-        //throw new exception($archivo, true);
+        $file = null;
         if(env('PRODUCCION') == 'true'){
             $file = "/home/ntbflekg/public_html/documentos/curriculums/".$archivo;
         }else{
-            $file = public_path()."/documentos/curriculums/".$archivo;
+            $file = public_path("/documentos/curriculums/".$archivo);
+        }
+        //$file= "/home/shfnuaro/public_html/archivos/".$archivo;
+        return response()->download($file);
+    }
+
+    public function descargar_archivo_contrato($archivo){
+        $file = null;
+        if(env('PRODUCCION') == 'true'){
+            $file = "/home/ntbflekg/public_html/documentos/contratos/".$archivo;
+        }else{
+            $file = public_path("/documentos/contratos/".$archivo);
         }
         //$file= "/home/shfnuaro/public_html/archivos/".$archivo;
         return response()->download($file);
