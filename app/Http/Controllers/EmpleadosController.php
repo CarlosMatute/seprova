@@ -51,13 +51,16 @@ class EmpleadosController extends Controller
                     EC.NOMBRE ESTADO_CIVIL,
                     E.NOMBRE_CONYUGUE,
                     E.UBICACION_CASA,
-                    E.CREATED_AT
+                    E.CREATED_AT,
+                    E.ID_PUESTO,
+                    P.NOMBRE PUESTO
                 FROM
                     PUBLIC.EMPLEADOS E
                     JOIN TALLAS_CAMISAS TC ON E.ID_TALLA_CAMISA = TC.ID
                     JOIN TALLAS_PANTALONES TP ON E.ID_TALLA_PANTALON = TP.ID
                     JOIN TIPOS_SANGRE TS ON E.ID_TIPO_SANGRE = TS.ID
                     LEFT JOIN ESTADO_CIVIL EC ON E.ID_ESTADO_CIVIL = EC.ID
+                    LEFT JOIN PUESTOS P ON E.ID_PUESTO = P.ID
                 WHERE
                     E.DELETED_AT IS NULL;");
 
@@ -125,6 +128,16 @@ class EmpleadosController extends Controller
             WHERE
                 DELETED_AT IS NULL");
 
+        $puestos = DB::select("SELECT
+                ID,
+                NOMBRE
+            FROM
+                PUESTOS
+            WHERE
+                DELETED_AT IS NULL
+            ORDER BY
+                NOMBRE");
+
         return view('seprova.empleados')
                 ->with('empleados', $empleados)
                 ->with('tallas_camisas', $tallas_camisas)
@@ -132,7 +145,8 @@ class EmpleadosController extends Controller
                 ->with('tipo_sangre', $tipo_sangre)
                 ->with('estado_civil', $estado_civil)
                 ->with('contratos', $contratos)
-                ->with('ubicaciones_contratos', $ubicaciones_contratos);
+                ->with('ubicaciones_contratos', $ubicaciones_contratos)
+                ->with('puestos', $puestos);
     }
 
     public function guardar_empleados(Request $request){
@@ -147,6 +161,7 @@ class EmpleadosController extends Controller
         $check_seguro_vida = $request->check_seguro_vida;
         $numero_poliza = $request->numero_poliza;
         $tipo_sangre = $request->tipo_sangre;
+        $puesto = $request->puesto;
         $talla_camisa = $request->talla_camisa;
         $talla_pantalon = $request->talla_pantalon;
         $check_seguro_social = ($request->check_seguro_social == '1') ? 1 : 2;
@@ -191,6 +206,7 @@ class EmpleadosController extends Controller
                                 ID_TALLA_CAMISA,
                                 ID_TALLA_PANTALON,
                                 ID_TIPO_SANGRE,
+                                ID_PUESTO,
                                 NOMBRE_CONYUGUE,
                                 UBICACION_CASA,
                                 ID_ESTADO_CIVIL,
@@ -199,7 +215,7 @@ class EmpleadosController extends Controller
                         VALUES
                             (:primer_nombre, :segundo_nombre, :primer_apellido, :segundo_apellido, :identidad, 
                             :telefono, :domicilio, :numero_poliza, :check_seguro_social, :check_rap, :check_canon, 
-                            :talla_camisa, :talla_pantalon, :tipo_sangre, :nombre_conyugue, :ubicacion_casa,
+                            :talla_camisa, :talla_pantalon, :tipo_sangre, :puesto, :nombre_conyugue, :ubicacion_casa,
                             :estado_civil, :identidad_conyugue)
                     returning id;",
                     ["primer_nombre" => $primer_nombre,
@@ -210,6 +226,7 @@ class EmpleadosController extends Controller
                     "identidad" => $identidad,
                     "numero_poliza" => $numero_poliza,
                     "tipo_sangre" => $tipo_sangre,
+                    "puesto" => $puesto,
                     "talla_camisa" => $talla_camisa,
                     "talla_pantalon" => $talla_pantalon,
                     "check_seguro_social" => $check_seguro_social,
@@ -299,6 +316,7 @@ class EmpleadosController extends Controller
                             ID_TALLA_CAMISA = :talla_camisa,
                             ID_TALLA_PANTALON = :talla_pantalon,
                             ID_TIPO_SANGRE = :tipo_sangre,
+                            ID_PUESTO = :puesto,
                             NOMBRE_CONYUGUE = :nombre_conyugue,
                             UBICACION_CASA = :ubicacion_casa,
                             ID_ESTADO_CIVIL = :estado_civil,
@@ -315,6 +333,7 @@ class EmpleadosController extends Controller
                     "identidad" => $identidad,
                     "numero_poliza" => $numero_poliza,
                     "tipo_sangre" => $tipo_sangre,
+                    "puesto" => $puesto,
                     "talla_camisa" => $talla_camisa,
                     "talla_pantalon" => $talla_pantalon,
                     "check_seguro_social" => $check_seguro_social,
@@ -340,50 +359,53 @@ class EmpleadosController extends Controller
                 $msgError = "Acción inválida";
             }
             $empleados_list = collect(\DB::select("SELECT
-                        E.ID,
-                        E.PRIMER_NOMBRE,
-                        E.SEGUNDO_NOMBRE,
-                        E.PRIMER_APELLIDO,
-                        E.SEGUNDO_APELLIDO,
-                        E.IDENTIDAD,
-                        E.TELEFONO,
-                        E.DIRECCION,
-                        E.POLIZA_SEGURO,
-                        E.SEGURO_SOCIAL,
-                        CASE
-                            WHEN E.SEGURO_SOCIAL = 1 THEN 'Inscrito'
-                            ELSE 'No Inscrito'
-                        END SEGURO_SOCIAL_INSCRIPCION,
-                        E.RAP,
-                        CASE
-                            WHEN E.RAP = 1 THEN 'Inscrito'
-                            ELSE 'No Inscrito'
-                        END RAP_INSCRIPCION,
-                        E.FOTO,
-                        E.DECLARADO_CANON,
-                        CASE
-                            WHEN E.DECLARADO_CANON = 1 THEN 'Declarado'
-                            ELSE 'No Declarado'
-                        END DECLARADO_CANON_DECLARACION,
-                        E.ID_TALLA_CAMISA,
-                        TC.NOMBRE TALLA_CAMISA,
-                        E.ID_TALLA_PANTALON,
-                        TP.NOMBRE TALLA_PANTALON,
-                        E.ID_TIPO_SANGRE,
-                        TS.NOMBRE TIPO_SANGRE,
-                        EC.ID ID_ESTADO_CIVIL,
-                        EC.NOMBRE ESTADO_CIVIL,
-                        E.NOMBRE_CONYUGUE,
-                        E.UBICACION_CASA,
-                        E.CREATED_AT
-                    FROM
-                        PUBLIC.EMPLEADOS E
-                        JOIN TALLAS_CAMISAS TC ON E.ID_TALLA_CAMISA = TC.ID
-                        JOIN TALLAS_PANTALONES TP ON E.ID_TALLA_PANTALON = TP.ID
-                        JOIN TIPOS_SANGRE TS ON E.ID_TIPO_SANGRE = TS.ID
-                        LEFT JOIN ESTADO_CIVIL EC ON E.ID_ESTADO_CIVIL = EC.ID
-                    WHERE
-                        E.DELETED_AT IS NULL
+                            E.ID,
+                            E.PRIMER_NOMBRE,
+                            E.SEGUNDO_NOMBRE,
+                            E.PRIMER_APELLIDO,
+                            E.SEGUNDO_APELLIDO,
+                            E.IDENTIDAD,
+                            E.TELEFONO,
+                            E.DIRECCION,
+                            E.POLIZA_SEGURO,
+                            E.SEGURO_SOCIAL,
+                            CASE
+                                WHEN E.SEGURO_SOCIAL = 1 THEN 'Inscrito'
+                                ELSE 'No Inscrito'
+                            END SEGURO_SOCIAL_INSCRIPCION,
+                            E.RAP,
+                            CASE
+                                WHEN E.RAP = 1 THEN 'Inscrito'
+                                ELSE 'No Inscrito'
+                            END RAP_INSCRIPCION,
+                            E.FOTO,
+                            E.DECLARADO_CANON,
+                            CASE
+                                WHEN E.DECLARADO_CANON = 1 THEN 'Declarado'
+                                ELSE 'No Declarado'
+                            END DECLARADO_CANON_DECLARACION,
+                            E.ID_TALLA_CAMISA,
+                            TC.NOMBRE TALLA_CAMISA,
+                            E.ID_TALLA_PANTALON,
+                            TP.NOMBRE TALLA_PANTALON,
+                            E.ID_TIPO_SANGRE,
+                            TS.NOMBRE TIPO_SANGRE,
+                            EC.ID ID_ESTADO_CIVIL,
+                            EC.NOMBRE ESTADO_CIVIL,
+                            E.NOMBRE_CONYUGUE,
+                            E.UBICACION_CASA,
+                            E.CREATED_AT,
+                            E.ID_PUESTO,
+                            P.NOMBRE PUESTO
+                        FROM
+                            PUBLIC.EMPLEADOS E
+                            JOIN TALLAS_CAMISAS TC ON E.ID_TALLA_CAMISA = TC.ID
+                            JOIN TALLAS_PANTALONES TP ON E.ID_TALLA_PANTALON = TP.ID
+                            JOIN TIPOS_SANGRE TS ON E.ID_TIPO_SANGRE = TS.ID
+                            LEFT JOIN ESTADO_CIVIL EC ON E.ID_ESTADO_CIVIL = EC.ID
+                            LEFT JOIN PUESTOS P ON E.ID_PUESTO = P.ID
+                        WHERE
+                            E.DELETED_AT IS NULL
                         AND E.ID = :id;", ["id" => $id]))->first();
             DB::commit();
         } catch (Exception $e) {
@@ -406,54 +428,58 @@ class EmpleadosController extends Controller
     public function expediente_empleados($id_empleado){
 
         $empleado = collect(\DB::select("SELECT
-                        E.ID,
-                        E.PRIMER_NOMBRE,
-                        E.SEGUNDO_NOMBRE,
-                        E.PRIMER_APELLIDO,
-                        E.SEGUNDO_APELLIDO,
-                        E.IDENTIDAD,
-                        E.TELEFONO,
-                        E.DIRECCION,
-                        CASE
-                            WHEN E.POLIZA_SEGURO IS NOT NULL THEN E.POLIZA_SEGURO::TEXT
-                            ELSE 'No Aplica'
-                        END POLIZA_SEGURO,
-                        E.SEGURO_SOCIAL,
-                        CASE
-                            WHEN E.SEGURO_SOCIAL = 1 THEN 'Inscrito'
-                            ELSE 'No Inscrito'
-                        END SEGURO_SOCIAL_INSCRIPCION,
-                        E.RAP,
-                        CASE
-                            WHEN E.RAP = 1 THEN 'Inscrito'
-                            ELSE 'No Inscrito'
-                        END RAP_INSCRIPCION,
-                        E.FOTO,
-                        E.DECLARADO_CANON,
-                        CASE
-                            WHEN E.DECLARADO_CANON = 1 THEN 'Declarado'
-                            ELSE 'No Declarado'
-                        END DECLARADO_CANON_DECLARACION,
-                        E.ID_TALLA_CAMISA,
-                        TC.NOMBRE TALLA_CAMISA,
-                        E.ID_TALLA_PANTALON,
-                        TP.NOMBRE TALLA_PANTALON,
-                        E.ID_TIPO_SANGRE,
-                        TS.NOMBRE TIPO_SANGRE,
-                        E.NOMBRE_CONYUGUE,
-                        E.IDENTIDAD_CONYUGUE,
-                        E.CURRICULUM,
-                        E.CONTRATO,
-                        E.UBICACION_CASA,
-                        E.CREATED_AT
-                    FROM
-                        PUBLIC.EMPLEADOS E
-                        JOIN TALLAS_CAMISAS TC ON E.ID_TALLA_CAMISA = TC.ID
-                        JOIN TALLAS_PANTALONES TP ON E.ID_TALLA_PANTALON = TP.ID
-                        JOIN TIPOS_SANGRE TS ON E.ID_TIPO_SANGRE = TS.ID
-                    WHERE
-                        E.DELETED_AT IS NULL
-                        AND E.ID = :id;", ["id" => $id_empleado]))->first();
+                    E.ID,
+                    E.PRIMER_NOMBRE,
+                    E.SEGUNDO_NOMBRE,
+                    E.PRIMER_APELLIDO,
+                    E.SEGUNDO_APELLIDO,
+                    E.IDENTIDAD,
+                    E.TELEFONO,
+                    E.DIRECCION,
+                    CASE
+                        WHEN E.POLIZA_SEGURO IS NOT NULL THEN E.POLIZA_SEGURO::TEXT
+                        ELSE 'No Aplica'
+                    END POLIZA_SEGURO,
+                    E.SEGURO_SOCIAL,
+                    CASE
+                        WHEN E.SEGURO_SOCIAL = 1 THEN 'Inscrito'
+                        ELSE 'No Inscrito'
+                    END SEGURO_SOCIAL_INSCRIPCION,
+                    E.RAP,
+                    CASE
+                        WHEN E.RAP = 1 THEN 'Inscrito'
+                        ELSE 'No Inscrito'
+                    END RAP_INSCRIPCION,
+                    E.FOTO,
+                    E.DECLARADO_CANON,
+                    CASE
+                        WHEN E.DECLARADO_CANON = 1 THEN 'Declarado'
+                        ELSE 'No Declarado'
+                    END DECLARADO_CANON_DECLARACION,
+                    E.ID_TALLA_CAMISA,
+                    TC.NOMBRE TALLA_CAMISA,
+                    E.ID_TALLA_PANTALON,
+                    TP.NOMBRE TALLA_PANTALON,
+                    E.ID_TIPO_SANGRE,
+                    TS.NOMBRE TIPO_SANGRE,
+                    E.NOMBRE_CONYUGUE,
+                    E.IDENTIDAD_CONYUGUE,
+                    E.CURRICULUM,
+                    E.CONTRATO,
+                    E.UBICACION_CASA,
+                    E.CREATED_AT,
+                    EC.NOMBRE ESTADO_CIVIL,
+                    P.NOMBRE PUESTO
+                FROM
+                    PUBLIC.EMPLEADOS E
+                    JOIN TALLAS_CAMISAS TC ON E.ID_TALLA_CAMISA = TC.ID
+                    JOIN TALLAS_PANTALONES TP ON E.ID_TALLA_PANTALON = TP.ID
+                    JOIN TIPOS_SANGRE TS ON E.ID_TIPO_SANGRE = TS.ID
+                    LEFT JOIN ESTADO_CIVIL EC ON E.ID_ESTADO_CIVIL = EC.ID
+                    LEFT JOIN PUESTOS P ON E.ID_PUESTO = P.ID
+                WHERE
+                    E.DELETED_AT IS NULL
+                    AND E.ID = :id;", ["id" => $id_empleado]))->first();
 
         $contratos_empleado = DB::select("SELECT
                     CC.ID,

@@ -64,6 +64,7 @@
                     <th>Identidad</th>
                     <th>Telefono</th>
                     <th>Dirección</th>
+                    <th>Puesto</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -84,6 +85,7 @@
                         <td>{{$row->identidad}}</td>
                         <td>{{$row->telefono}}</td>
                         <td>{{$row->direccion}}</td>
+                        <td>{{$row->puesto}}</td>
                         <td>
                             <x-base.button
                                 class="mb-2 mr-1 editar"
@@ -104,6 +106,7 @@
                                 data-id_talla_camisa="{{$row->id_talla_camisa}}"
                                 data-id_talla_pantalon="{{$row->id_talla_pantalon}}"
                                 data-id_tipo_sangre="{{$row->id_tipo_sangre}}"
+                                data-id_puesto="{{$row->id_puesto}}"
                                 data-id_estado_civil="{{$row->id_estado_civil}}"
                                 data-estado_civil="{{$row->estado_civil}}"
                                 data-nombre_conyugue="{{$row->nombre_conyugue}}"
@@ -133,6 +136,7 @@
                                 data-id_talla_camisa="{{$row->id_talla_camisa}}"
                                 data-id_talla_pantalon="{{$row->id_talla_pantalon}}"
                                 data-id_tipo_sangre="{{$row->id_tipo_sangre}}"
+                                data-id_puesto="{{$row->id_puesto}}"
                                 data-id_estado_civil="{{$row->id_estado_civil}}"
                                 data-estado_civil="{{$row->estado_civil}}"
                                 data-nombre_conyugue="{{$row->nombre_conyugue}}"
@@ -214,19 +218,19 @@
                     </x-base.form-label>
                     <x-base.form-input name="segundo_apellido" id="modal_input_segundo_apellido" type="text" placeholder="Escriba el Segundo Apellido" />
                 </div>
-                <div class="col-span-12 md:col-span-12 lg:col-span-4">
+                <div class="col-span-12 md:col-span-12 lg:col-span-3">
                     <x-base.form-label class="font-extrabold" for="modal_input_telefono">
                         Teléfono
                     </x-base.form-label>
                     <x-base.form-input name="telefono" id="modal_input_telefono" type="number" placeholder="Escriba el Teléfono" />
                 </div>
-                <div class="col-span-12 md:col-span-12 lg:col-span-4">
+                <div class="col-span-12 md:col-span-12 lg:col-span-3">
                     <x-base.form-label class="font-extrabold" for="modal_input_identidad">
                         Identidad
                     </x-base.form-label>
                     <x-base.form-input name="identidad" id="modal_input_identidad" type="number" placeholder="Escriba la Identidad" />
                 </div>
-                <div class="col-span-12 md:col-span-12 lg:col-span-4">
+                <div class="col-span-12 md:col-span-12 lg:col-span-3">
                     <x-base.form-label class="font-extrabold" for="modal_input_numero_poliza">
                     <x-base.form-check class="mr-2">
                                         <x-base.form-check.input
@@ -240,6 +244,16 @@
                                     </x-base.form-check>
                     </x-base.form-label>
                     <x-base.form-input name="numero_poliza" disabled id="modal_input_numero_poliza" type="number" placeholder="Escriba el Número de Póliza" />
+                </div>
+                <div class="col-span-12 md:col-span-12 lg:col-span-3">
+                    <x-base.form-label class="font-extrabold" for="modal_select_puesto">
+                        Puesto
+                    </x-base.form-label>
+                    <x-base.form-select name="puesto" id="modal_select_puesto" class="w-full">
+                        @foreach($puestos as $row)
+                            <option value="{{$row->id}}">{{$row->nombre}}</option>
+                        @endforeach
+                    </x-base.form-select>
                 </div>
                 <div class="col-span-12 md:col-span-12 lg:col-span-2">
                     <x-base.form-label class="font-extrabold" for="modal_select_tipo_sangre">
@@ -477,6 +491,7 @@
             var check_seguro_vida = null;
             var numero_poliza = null;
             var tipo_sangre = null;
+            var puesto = null;
             var talla_camisa = null;
             var talla_pantalon = null;
             var check_seguro_social = null;
@@ -606,6 +621,7 @@
                     $('#modal_input_numero_poliza').prop('disabled', false);
                 }
                 tipo_sangre = $(this).data('id_tipo_sangre');
+                puesto = $(this).data('id_puesto');
                 talla_camisa = $(this).data('id_talla_camisa');
                 talla_pantalon = $(this).data('id_talla_pantalon');
                 check_seguro_social = $(this).data('seguro_social');
@@ -647,6 +663,7 @@
                 $("#modal_input_identidad").val(identidad);
                 $("#modal_input_numero_poliza").val(numero_poliza);
                 $("#modal_select_tipo_sangre").val(tipo_sangre);
+                $("#modal_select_puesto").val(puesto);
                 $("#modal_select_talla_camisa").val(talla_camisa);
                 $("#modal_select_talla_pantalon").val(talla_pantalon);
                 $("#modal_select_estado_civil").val(estado_civil);
@@ -695,6 +712,7 @@
                 $('#modal_input_numero_poliza').prop('disabled', true);
                 $("#modal_input_numero_poliza").val('');
                 $("#modal_select_tipo_sangre").val('');
+                $("#modal_select_puesto").val('');
                 $("#modal_select_talla_camisa").val('');
                 $("#modal_select_talla_pantalon").val('');
                 $('#modal_checkbox_seguro_social').prop('checked', false);
@@ -737,7 +755,7 @@
 
             $('#modal_select_estado_civil').change(function(){
                 estado_civil = $("#modal_select_estado_civil").val();
-                if (estado_civil == 2) {
+                if (estado_civil != 1) {
                     $('#modal_input_nombre_conyugue, #modal_input_identidad_conyugue').prop('disabled', false);
                 } else {
                     $('#modal_input_nombre_conyugue, #modal_input_identidad_conyugue').prop('disabled', true);
@@ -767,6 +785,7 @@
                 check_seguro_vida = $("#modal_checkbox_poliza").prop('checked');
                 numero_poliza = $("#modal_input_numero_poliza").val();
                 tipo_sangre = $("#modal_select_tipo_sangre").val();
+                puesto = $("#modal_select_puesto").val();
                 talla_camisa = $("#modal_select_talla_camisa").val();
                 talla_pantalon = $("#modal_select_talla_pantalon").val();
                 check_seguro_social = $("#modal_checkbox_seguro_social").prop('checked');
@@ -913,6 +932,7 @@
                         'check_seguro_vida' : check_seguro_vida,
                         'numero_poliza' : numero_poliza,
                         'tipo_sangre' : tipo_sangre,
+                        'puesto' : puesto,
                         'talla_camisa' : talla_camisa,
                         'talla_pantalon' : talla_pantalon,
                         'check_seguro_social' : check_seguro_social,
@@ -959,6 +979,7 @@
                                         'data-id_talla_camisa="'+row.id_talla_camisa+'"'+ 
                                         'data-id_talla_pantalon="'+row.id_talla_pantalon+'"'+ 
                                         'data-id_tipo_sangre="'+row.id_tipo_sangre+'"'+ 
+                                        'data-id_puesto="'+row.id_puesto+'"'+ 
                                         'data-id_estado_civil="'+row.id_estado_civil+'"'+ 
                                         'data-estado_civil="'+row.estado_civil+'"'+ 
                                         'data-nombre_conyugue="'+row.nombre_conyugue+'"'+ 
@@ -981,6 +1002,7 @@
                                         'data-id_talla_camisa="'+row.id_talla_camisa+'"'+ 
                                         'data-id_talla_pantalon="'+row.id_talla_pantalon+'"'+ 
                                         'data-id_tipo_sangre="'+row.id_tipo_sangre+'"'+ 
+                                        'data-id_puesto="'+row.id_puesto+'"'+ 
                                         'data-id_estado_civil="'+row.id_estado_civil+'"'+ 
                                         'data-estado_civil="'+row.estado_civil+'"'+ 
                                         'data-nombre_conyugue="'+row.nombre_conyugue+'"'+ 

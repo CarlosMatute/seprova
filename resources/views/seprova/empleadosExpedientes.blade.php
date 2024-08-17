@@ -39,7 +39,7 @@
                     <div class="w-24 truncate text-lg font-medium sm:w-40 sm:whitespace-normal">
                         {{ $empleado->primer_nombre }} {{ $empleado->segundo_nombre }} {{ $empleado->primer_apellido }} {{ $empleado->segundo_apellido }}
                     </div>
-                    <div class="text-slate-500">Guardia de Seguridad</div>
+                    <div class="text-slate-500">{{ $empleado->puesto }}</div>
                 </div>
             </div>
             <div
@@ -68,6 +68,13 @@
                             icon="Target"
                         />
                         {{ $empleado->direccion }}
+                    </div>
+                    <div class="mt-3 flex items-center truncate sm:whitespace-normal">
+                        <x-base.lucide
+                            class="mr-2 h-4 w-4"
+                            icon="Heart"
+                        />
+                        {{ $empleado->estado_civil }}
                     </div>
                 </div>
             </div>
